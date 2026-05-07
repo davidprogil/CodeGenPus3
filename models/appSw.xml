@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sgi:interface xmlns:sgi="http://www.example.org/interface"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/interface interface.xsd ">
+	<sgi:description>Interface of the AppSW</sgi:description>
+	<sgi:types>
+		<!-- Enumerations xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+		<!-- General -->
+		<sgi:enum name="EnumPktType" baseType="uint8">
+			<sgi:enumElement label="PKT_TELEMETRY" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PKT_TELECOMMAND" value="1" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumBoolean" baseType="uint8">
+			<sgi:enumElement label="BOL_FALSE" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BOL_TRUE" value="1" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumImageDownloadAlgorithm" baseType="uint8">
+			<sgi:enumElement label="COMP_NULL" value="0" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumApid" baseType="uint16">
+			<sgi:enumElement label="APID_SUPERVISOR" value="32" type="null"></sgi:enumElement>
+			<sgi:enumElement label="APID_APPLICATIONSOFTWARE" value="33" type="null"></sgi:enumElement>
+			<sgi:enumElement label="APID_CAMERAIF" value="3" type="null"></sgi:enumElement>
+			<sgi:enumElement label="APID_OBCIF" value="35" type="null"></sgi:enumElement>
+			<sgi:enumElement label="APID_FRONTEND" value="100" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<!-- Service 1 -->
+		<sgi:enum name="EnumFid" baseType="uint16">
+			<sgi:enumElement label="FID_OK" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FID_INVALID_PLENGTH" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FID_ILLEGAL_PUS_VERSION" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FID_CS_DISCREP" value="3" type="UnexpectedValueUint16"></sgi:enumElement>
+			<sgi:enumElement label="FID_ILLEGAL_P_TYPE" value="4" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FID_LENGTH_DISCREP" value="5" type="UnexpectedValueUint16"></sgi:enumElement>
+			<sgi:enumElement label="FID_INVALID_PARAMETER_VALUE" value="6" type="InvalidParameterValue"></sgi:enumElement>
+			<sgi:enumElement label="FID_BUSY" value="7" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<!-- Service 3 -->
+		<sgi:enum name="EnumHkReportId" baseType="uint16">
+			<sgi:enumElement label="HKID_ALL" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="HKID_HEART_BEAT" value="1" type="HkHeartBeat"></sgi:enumElement>
+			<sgi:enumElement label="HKID_CAM_STATUS" value="2" type="HkCamStatus"></sgi:enumElement>
+		</sgi:enum>
+		<!-- Service 5 -->
+		<sgi:enum name="EnumEventId" baseType="uint16">
+			<sgi:enumElement label="EID_MODE_CHANGE" value="0" type="Mode"></sgi:enumElement>
+			<sgi:enumElement label="EID_SEQUENCE_START" value="1" type="FunctionId"></sgi:enumElement>
+			<sgi:enumElement label="EID_SEQUENCE_END" value="2" type="FunctionId"></sgi:enumElement>
+			<sgi:enumElement label="EID_SEQUENCE_ABORT" value="3" type="FunctionId"></sgi:enumElement>
+			<sgi:enumElement label="EID_STORAGE_FAILURE" value="4" type="null"></sgi:enumElement>
+			<sgi:enumElement label="EID_DEATH_REPORT" value="5" type="DeathReport"></sgi:enumElement>
+			<sgi:enumElement label="EID_IMAGE_DISCARDED" value="6" type="null"></sgi:enumElement>
+			<sgi:enumElement label="EID_SAVE_IMAGE" value="7" type="null"></sgi:enumElement>
+			<sgi:enumElement label="EID_SAVE_IMAGE_FAILED" value="8" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumRebootReason" baseType="uint8">
+			<sgi:enumElement label="RS_UNKNOWN" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RS_COMMAND" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RS_POWER_ON" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RS_SW_ERROR" value="3" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<!-- Service 8 -->
+		<sgi:enum name="EnumFunctionId" baseType="uint16"> <!-- TODO types -->
+			<sgi:enumElement label="FUN_REBOOT_BOARD" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_RESET_SOFTWARE" value="1" type="ApidStructure"></sgi:enumElement>
+			<sgi:enumElement label="FUN_ACTIVATE_CAMERA_WAC" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_ACTIVATE_CAMERA_NAC" value="3" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_DEACTIVATE_CAMERA_WAC" value="4" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_DEACTIVATE_CAMERA_NAC" value="5" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_TAKE_PICTURE_WAC" value="6" type="TakePicture"></sgi:enumElement>
+			<sgi:enumElement label="FUN_TAKE_PICTURE_NAC" value="7" type="TakePicture"></sgi:enumElement>
+			<sgi:enumElement label="FUN_DOWNLOAD_PICTURES" value="8" type="DownloadPictures"></sgi:enumElement>
+			<sgi:enumElement label="FUN_START_PICTURE_SEQUENCE_WAC" value="9" type="PictureSequence"></sgi:enumElement>
+			<sgi:enumElement label="FUN_START_PICTURE_SEQUENCE_NAC" value="10" type="PictureSequence"></sgi:enumElement>
+			<sgi:enumElement label="FUN_START_LANDING_PICTURE_SEQUENCE_WAC" value="11" type="LandingPictureSequence"></sgi:enumElement>
+			<sgi:enumElement label="FUN_START_LANDING_PICTURE_SEQUENCE_NAC" value="12" type="LandingPictureSequence"></sgi:enumElement>
+			<sgi:enumElement label="FUN_MODE_SAFE" value="13" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_MODE_FLYBY" value="14" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_MODE_ALIVENESS" value="15" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_MODE_LANDING" value="16" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumCameraId" baseType="uint8">
+			<sgi:enumElement label="CAM_WAC" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="CAM_NAC" value="1" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<!-- Service 128 -->
+		<sgi:enum name="EnumMode" baseType="uint16">
+			<sgi:enumElement label="MODE_SAFE" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="MODE_ALIVENESS" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="MODE_FLYBY" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="MODE_LANDING" value="3" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumExposureStep" baseType="uint8">
+			<sgi:enumElement label="EXST_10us" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="EXST_1ms" value="1" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumPgaGain" baseType="uint8">
+			<sgi:enumElement label="PG_X1" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PG_X1_2" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PG_X1_4" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PG_X1_6" value="3" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumSequenceParameterId" baseType="uint8">
+			<sgi:enumElement label="PAID_FLYBY_START_NA_S" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_FLYBY_START_WA_S" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_FLYBY_RATE_NA_S" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_FLYBY_RATE_WA_S" value="3" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_FLYBY_PICTURES_NO_NA" value="4" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_FLYBY_PICTURES_NO_WA" value="5" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_ALIVENESS_START_NA_S" value="6" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_ALIVENESS_START_WA_S" value="7" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_ALIVENESS_RATE_NA_S" value="8" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_ALIVENESS_RATE_WA_S" value="9" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_ALIVENESS_PICTURES_NO_NA" value="10" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_ALIVENESS_PICTURES_NO_WA" value="11" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_START_NA_S" value="12" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_START_WA_S" value="13" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_START_RATE_NA_S" value="14" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_START_RATE_WA_S" value="15" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_END_RATE_RATE_NA_S" value="16" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_END_RATE_RATE_WA_S" value="17" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_PICTURES_NO_NA" value="18" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PAID_LANDING_PICTURES_NO_WA" value="19" type="null"></sgi:enumElement>
+		</sgi:enum>
+		
+		<!-- Types xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+		<!-- Service 1 -->
+		<sgi:structureField name="UnexpectedValueUint16">
+			<sgi:field name="expectedValue" type="uint16"></sgi:field>
+			<sgi:field name="foundValue" type="uint16"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="InvalidParameterValue">
+			<sgi:field name="parameterCounter" type="uint16"></sgi:field>
+		</sgi:structureField>
+		<!-- Service 3 -->
+		<sgi:structureField name="HkHeartBeat">
+			<sgi:field name="upTime" type="uint32"></sgi:field>
+			<sgi:field name="onboardTime" type="uint32"></sgi:field>
+			<sgi:field name="mode" type="EnumMode"></sgi:field>
+			<sgi:field name="aplicationSwStatus" type="uint8"></sgi:field>
+			<sgi:field name="obcIfStatus" type="uint8"></sgi:field>
+			<sgi:field name="camIfStatus" type="uint8"></sgi:field>
+			<sgi:field name="camNaPower" type="uint8"></sgi:field>
+			<sgi:field name="camWaPower" type="uint8"></sgi:field>
+			<sgi:field name="camNaStatus" type="uint8"></sgi:field>
+			<sgi:field name="camWaStatus" type="uint8"></sgi:field>
+			<sgi:field name="processesNo" type="uint16"></sgi:field>
+			<sgi:field name="freeMemory" type="uint32"></sgi:field>
+			<sgi:field name="freeSpace" type="uint32"></sgi:field>
+			<sgi:field name="cpuLoad" type="float32"></sgi:field>	
+		</sgi:structureField>
+		<sgi:structureField name="HkCamStatus">
+			<sgi:field name="bufferedNo" type="uint8"></sgi:field>
+			<sgi:field name="storedNo" type="uint16"></sgi:field>
+			<sgi:field name="bufferedNo" type="uint16"></sgi:field>
+				<sgi:field name="wacTm1_1No" type="uint16"></sgi:field>
+				<sgi:field name="wacTm1_2No" type="uint16"></sgi:field>
+				<sgi:field name="wacTm1_7No" type="uint16"></sgi:field>
+				<sgi:field name="wacTm1_8No" type="uint16"></sgi:field>
+				<sgi:field name="wacTm3_25No" type="uint16"></sgi:field>
+				<sgi:field name="wacSentCommandsNo" type="uint16"></sgi:field>
+				<sgi:field name="wacReceivedImagesNo" type="uint16"></sgi:field>
+				<sgi:field name="wacTemperature" type="float32"></sgi:field>
+				<sgi:field name="nacTm1_1No" type="uint16"></sgi:field>
+				<sgi:field name="nacTm1_2No" type="uint16"></sgi:field>
+				<sgi:field name="nacTm1_7No" type="uint16"></sgi:field>
+				<sgi:field name="nacTm1_8No" type="uint16"></sgi:field>
+				<sgi:field name="nacTm3_25No" type="uint16"></sgi:field>
+				<sgi:field name="nacSentCommandsNo" type="uint16"></sgi:field>
+				<sgi:field name="nacReceivedImagesNo" type="uint16"></sgi:field>
+				<sgi:field name="nacTemperature" type="float32"></sgi:field>
+		</sgi:structureField>
+		<!-- Service 5 -->
+		<sgi:structureField name="DeathReport">
+			<sgi:field name="bootCounter" type="uint32"></sgi:field>
+			<sgi:field name="rebootReason" type="EnumRebootReason"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="FunctionId">
+			<sgi:field name="functionId" type="EnumFunctionId"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="Mode">
+			<sgi:field name="mode" type="EnumMode"></sgi:field>
+		</sgi:structureField>
+		<!-- Service 8 -->
+		<sgi:structureField name="ApidStructure">
+			<sgi:field name="apid" type="uint16"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="CameraIdStructure">
+			<sgi:field name="cameraId" type="EnumCameraId"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="TakePicture">
+			<sgi:field name="storeId" type="uint8">
+				<sgi:restrictionDetails>
+					<sgi:maxInclusive>3</sgi:maxInclusive>
+				</sgi:restrictionDetails>
+			</sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="DownloadPictures">
+			<sgi:field name="numberOfImages" type="uint8"></sgi:field>
+			<sgi:field name="isDeleteImages" type="EnumBoolean"></sgi:field>
+			<sgi:field name="compressionAlgorithm" type="EnumImageDownloadAlgorithm"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="PictureSequence">
+			<sgi:field name="timeToWaitBeforeStart" type="uint32"></sgi:field>
+			<sgi:field name="timeBetweenPictures" type="uint32"></sgi:field>
+			<sgi:field name="numberOfPictures" type="uint16"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="LandingPictureSequence">
+			<sgi:field name="timeToWaitBeforeStart" type="uint32"></sgi:field>
+			<sgi:field name="startTimeBetweenPictures" type="uint32"></sgi:field>
+			<sgi:field name="endTimeBetweenPictures" type="uint32"></sgi:field>
+			<sgi:field name="duration" type="uint32"></sgi:field>
+		</sgi:structureField>
+	</sgi:types>
+	<sgi:packets>
+		<!-- Service 1 -->
+		<sgi:packet isCommand="false" name="SuccessReport" id="0x0101">
+			<sgi:description>Acknowledge Acceptance Success - This TM is dispatched when a TC has been successfully received (the TC must have had its ACK
+acceptance bit set).</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:structureField name="pusAcceptanceReport" type="PUS_AcceptanceReport" isUserCode="true"></sgi:structureField>
+		</sgi:packet>
+		<sgi:packet isCommand="false" name="FailReport" id="0x0102">
+			<sgi:description>Acknowledge Acceptance Failure - This TM is dispatched when a TC has been rejected, regardless of its ACK settings. For instance due to bad CRC</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:structureField name="pusAcceptanceReport" type="PUS_AcceptanceReport" isUserCode="true"></sgi:structureField>
+			<sgi:field name="failureId" type="EnumFid"></sgi:field>
+			<sgi:structureField name="failureInfo" type="variable" typeFromField="failureId"></sgi:structureField>
+		</sgi:packet>
+		<sgi:packet isCommand="false" name="SuccessExecutionReport" id="0x0107">
+			<sgi:description>Acknowledge Execution Success - This TM is dispatched when a TC has been successfully executed (the TC must have had its ACK
+execution bit set).</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:structureField name="pusAcceptanceReport" type="PUS_AcceptanceReport" isUserCode="true"></sgi:structureField>
+		</sgi:packet>
+		<sgi:packet isCommand="false" name="FailExecutionReport" id="0x0108">
+			<sgi:description>Acknowledge Execution Failure - This TM is dispatched when a TC has been accepted but hasn’t been successfully executed, regardless
+of its ACK settings.</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:structureField name="pusAcceptanceReport" type="PUS_AcceptanceReport" isUserCode="true"></sgi:structureField>
+			<sgi:field name="failureId" type="EnumFid"></sgi:field>
+			<sgi:structureField name="failureInfo" type="variable" typeFromField="failureId"></sgi:structureField>
+		</sgi:packet>
+		<!-- Service 3 -->
+		<!-- TC(3,5) -->
+		<sgi:packet isCommand="true" name="HkReportEnable" id="0x0305">
+			<sgi:description>Enable the Periodic Generation of Housekeeping Parameter Reports</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="numberOfRequests" type="uint8" restriction="RANGE">
+				<sgi:restrictionDetails>
+					<sgi:fixedValue>1</sgi:fixedValue>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="structureId" type="EnumHkReportId"></sgi:field>			
+		</sgi:packet>
+		<!-- TC(3,6) -->
+		<sgi:packet isCommand="true" name="HkReportDisable" id="0x0306">
+			<sgi:description>Disable the Periodic Generation of Housekeeping Parameter Reports</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="numberOfRequests" type="uint8" restriction="RANGE">
+				<sgi:restrictionDetails>
+					<sgi:fixedValue>1</sgi:fixedValue>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="structureId" type="EnumHkReportId"></sgi:field>			
+		</sgi:packet>
+		<!-- TM(3,25) -->
+		<sgi:packet isCommand="false" name="HkReport" id="0x0319">
+			<sgi:description>Informative Event</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="structureId" type="EnumHkReportId"></sgi:field>
+			<sgi:structureField name="hkData" type="variable" typeFromField="structureId"></sgi:structureField>
+		</sgi:packet>
+		<!-- TC(3,27) -->
+		<sgi:packet isCommand="true" name="HkGenerate" id="0x031B">
+			<sgi:description>Generate a One Shot Report for Housekeeping Parameter Report Structures</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="numberOfRequests" type="uint8" restriction="RANGE">
+				<sgi:restrictionDetails>
+					<sgi:fixedValue>1</sgi:fixedValue>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="structureId" type="EnumHkReportId"></sgi:field>			
+		</sgi:packet>
+		<!-- TC(3,31) -->
+		<sgi:packet isCommand="true" name="HkChangePeriod" id="0x031F">
+			<sgi:description>This Telecommand modifies the collection interval of housekeeping parameter report structures</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="numberOfRequests" type="uint8" restriction="RANGE">
+				<sgi:restrictionDetails>
+					<sgi:fixedValue>1</sgi:fixedValue>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="structureId" type="EnumHkReportId"></sgi:field>
+			<sgi:field name="collectionInterval" type="uint16"></sgi:field>						
+		</sgi:packet>
+		<!-- Service 5 -->
+		<sgi:packet isCommand="false" name="EventInformative" id="0x0501">
+			<sgi:description>Informative Event</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="eventId" type="EnumEventId"></sgi:field>
+			<sgi:structureField name="eventInfo" type="variable" typeFromField="eventId"></sgi:structureField>
+		</sgi:packet>
+		<sgi:packet isCommand="false" name="EventLowSeverity" id="0x0502">
+			<sgi:description>Low-Severity Anomaly Report</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="eventId" type="EnumEventId"></sgi:field>
+			<sgi:structureField name="eventInfo" type="variable" typeFromField="eventId"></sgi:structureField>
+		</sgi:packet>
+		<sgi:packet isCommand="false" name="EventMediumSeverity" id="0x0503">
+			<sgi:description>Medium-Severity Anomaly Report</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="eventId" type="EnumEventId"></sgi:field>
+			<sgi:structureField name="eventInfo" type="variable" typeFromField="eventId"></sgi:structureField>
+		</sgi:packet>
+		<sgi:packet isCommand="false" name="EventHighSeverity" id="0x0504">
+			<sgi:description>High-Severity Anomaly Report</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="eventId" type="EnumEventId"></sgi:field>
+			<sgi:structureField name="eventInfo" type="variable" typeFromField="eventId"></sgi:structureField>
+		</sgi:packet>
+		<!-- Service 8 -->
+		<sgi:packet isCommand="true" name="ExecuteFunction" id="0x0801">
+			<sgi:description>Requests to start the execution of a given software function.</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="functionId" type="EnumFunctionId"></sgi:field>
+			<sgi:structureField name="functionParameters" type="variable" typeFromField="functionId"></sgi:structureField>
+		</sgi:packet>
+		<sgi:packet isCommand="true" name="StopFunction" id="0x0880">
+			<sgi:description>Stops the execution of an ongoing function.</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="functionId" type="EnumFunctionId"></sgi:field>
+		</sgi:packet>
+		<!-- Service 9 -->
+		<sgi:packet isCommand="true" name="UpdateTime" id="0x0984">
+			<sgi:description>The TC is used to provide a new coarse reference to the camera for its local on board time.</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+			<sgi:field name="time" type="uint32"></sgi:field>
+			<sgi:field name="unused" type="uint32"></sgi:field>
+		</sgi:packet>
+		<!-- Service 17 -->
+		<sgi:packet isCommand="true" name="ConnectionTest" id="0x1103">
+			<sgi:description>This is the ping part of a ping-pong mechanism used to evaluate the responsive of the software</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+			<sgi:field name="apid" type="EnumApid"></sgi:field>
+		</sgi:packet>
+		<sgi:packet isCommand="false" name="ConnectionReport" id="0x1104">
+			<sgi:description>This is the response to TC(17,3) used to evaluate the responsive of the software</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true" />
+			<sgi:field name="apid" type="EnumApid"></sgi:field>
+		</sgi:packet>
+		<!-- Service 128 -->
+		<!-- TC(128,1) - Set Mode -->
+		<sgi:packet isCommand="true" name="SetMode" id="0x8001">
+			<sgi:description>Sets the Operating Mode of the software</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+			<sgi:field name="mode" type="EnumMode"></sgi:field>
+		</sgi:packet>
+		<!-- TC(128,2) - Set Picture Parameters -->
+		<sgi:packet isCommand="true" name="SetPictureParameters" id="0x8002">
+			<sgi:description>Sets high-level picture parameters</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+			<sgi:field name="cameraId" type="EnumCameraId"></sgi:field>
+			<sgi:field name="exposureStep" type="EnumExposureStep"></sgi:field><!-- TODO -->
+			<sgi:field name="exposure1" type="uint32"></sgi:field>
+			<sgi:field name="exposure2" type="uint32"></sgi:field>
+			<sgi:field name="autoExposureEnabled" type="EnumBoolean"></sgi:field>
+			<sgi:field name="hdrEnabled" type="EnumBoolean"></sgi:field>
+			<sgi:field name="testPatern" type="uint8">
+				<sgi:restrictionDetails>
+					<sgi:maxInclusive>15</sgi:maxInclusive>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="binning" type="EnumBoolean"></sgi:field>
+			<sgi:field name="compression" type="EnumBoolean"></sgi:field>
+			<sgi:field name="thresholdL" type="uint16"></sgi:field>
+			<sgi:field name="thresholdH" type="uint16"></sgi:field>
+		</sgi:packet>
+		<!-- TC(128,3) - Set Camera Parameters -->
+		<sgi:packet isCommand="true" name="SetCameraParameters" id="0x8003">
+			<sgi:description>Sets image acquisition parameters</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+			<sgi:field name="cameraId" type="EnumCameraId"></sgi:field>
+			<sgi:field name="offset" type="uint16">
+				<sgi:restrictionDetails>
+					<sgi:maxInclusive>16383</sgi:maxInclusive>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="adcGain" type="uint8">
+				<sgi:restrictionDetails>
+					<sgi:maxInclusive>63</sgi:maxInclusive>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="isPgaGainDoubled" type="EnumBoolean"></sgi:field>
+			<sgi:field name="pgaGain" type="EnumPgaGain"></sgi:field>
+			<sgi:field name="voltageRamp" type="uint8">
+				<sgi:restrictionDetails>
+					<sgi:maxInclusive>115</sgi:maxInclusive>
+					<sgi:minInclusive>102</sgi:minInclusive>
+				</sgi:restrictionDetails>
+			</sgi:field>
+		</sgi:packet>
+		<!-- TC(128,4) - Set Sequence Parameters -->
+		<sgi:packet isCommand="true" name="SetSequenceParameters" id="0x8004">
+			<sgi:description>Sets the parameters of the sequences that take pictures</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+			<sgi:field name="parameterId" type="EnumSequenceParameterId"></sgi:field>
+			<sgi:field name="parameterValue" type="uint8"></sgi:field>
+		</sgi:packet>
+		<!-- TC(128,5) - Save Parameters -->
+		<sgi:packet isCommand="true" name="SaveParameters" id="0x8005">
+			<sgi:description>Saves the parameters into persistent memory</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+		</sgi:packet>
+		<!-- TC(128,6) - Clear Parameters -->
+		<sgi:packet isCommand="true" name="ClearParameters" id="0x8006">
+			<sgi:description>Saves the parameters into persistent memory</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+		</sgi:packet>
+		<!-- TM(128,7) - Image Metadata -->
+		<sgi:packet isCommand="false" name="ImageMetadata" id="0x8007">
+			<sgi:description>Data about an image that which segments are about to be transmitted</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="bootCounter" type="uint32"></sgi:field>
+			<sgi:field name="acquisitionTimeStamp" type="uint32"></sgi:field>
+			<sgi:field name="cameraId" type="EnumCameraId"></sgi:field>
+			<sgi:field name="storeId" type="uint8"></sgi:field><!-- TODO up to 3 -->
+			<sgi:field name="exposureStep" type="EnumExposureStep"></sgi:field>
+			<sgi:field name="exposure1" type="uint32"></sgi:field>
+			<sgi:field name="exposure2" type="uint32"></sgi:field>
+			<sgi:field name="autoExposureEnabled" type="EnumBoolean"></sgi:field>
+			<sgi:field name="hdrEnabled" type="EnumBoolean"></sgi:field>
+			<sgi:field name="testPatern" type="uint8"></sgi:field>
+			<sgi:field name="binning" type="EnumBoolean"></sgi:field>
+			<sgi:field name="compression" type="EnumBoolean"></sgi:field>
+			<sgi:field name="thresholdL" type="uint16"></sgi:field>
+			<sgi:field name="thresholdH" type="uint16"></sgi:field>
+			<sgi:field name="offset" type="uint16"></sgi:field>
+			<sgi:field name="isPgaGainDoubled" type="EnumBoolean"></sgi:field>
+			<sgi:field name="pgaGain" type="EnumPgaGain"></sgi:field>
+			<sgi:field name="voltageRamp" type="uint8"></sgi:field>
+			<sgi:field name="withinThresholdPixelsNo" type="uint32"></sgi:field>
+			<sgi:field name="withinThresholdLinesNo" type="uint16"></sgi:field>
+		</sgi:packet>
+		<!-- TM(128,8) - Image Segment -->
+		<sgi:packet isCommand="false" name="ImageSegment" id="0x8008">
+			<sgi:description>Segment of pixels of an image.</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="bootCounter" type="uint32"></sgi:field>
+			<sgi:field name="acquisitionTimeStamp" type="uint32"></sgi:field>
+			<sgi:field name="cameraId" type="EnumCameraId"></sgi:field>
+			<sgi:field name="line" type="uint16"></sgi:field>
+			<sgi:field name="startRow" type="uint16"></sgi:field>
+			<sgi:field name="numberOfPixels" type="uint16">
+				<sgi:restrictionDetails>
+					<sgi:maxInclusive>1024</sgi:maxInclusive>
+				</sgi:restrictionDetails>
+			</sgi:field>
+			<sgi:field name="pixel" type="uint8" multiplicityFromField="numberOfPixels"></sgi:field>
+		</sgi:packet>
+		
+		<!-- TC(128,9) - Get Sequence Parameter Value -->
+		<sgi:packet isCommand="true" name="GetSequenceParametersValue" id="0x8009">
+			<sgi:description>Gets the value of a parameters of the sequences that take pictures</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
+			<sgi:field name="parameterId" type="EnumSequenceParameterId"></sgi:field>
+		</sgi:packet>
+		
+		<!-- TC(128,10) - Sequence Parameter Value -->
+		<sgi:packet isCommand="true" name="SequenceParametersValue" id="0x800A">
+			<sgi:description>Response to TC(128,9)</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true" />
+			<sgi:field name="parameterId" type="EnumSequenceParameterId"></sgi:field>
+			<sgi:field name="parameterValue" type="uint8"></sgi:field>
+		</sgi:packet>
+		
+	</sgi:packets>
+</sgi:interface>
