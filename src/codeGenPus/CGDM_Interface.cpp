@@ -11,7 +11,7 @@
 /* Application Includes ******************************************************/
 
 /* Private prototypes ********************************************************/
-void importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_Node *thisEnumX);
+
 
 /* Public Methods  ***********************************************************/
 CGDM_Interface::CGDM_Interface()
@@ -95,8 +95,8 @@ void CGDM_Interface::importPacketsFromXmlDoc(X_Node *packets)
 				CGDM_Packet thisPacket;
 				thisPacket.name=thisNode.getContentOfAttribute("name");
 				thisPacket.id=thisNode.getContentOfAttribute("id");
-				//TODO structures
-				importFieldsFromXmlDoc(&thisPacket.fields,&thisNode);
+				//note: also imports structures:
+				this->importFieldsFromXmlDoc(&thisPacket.fields,&thisNode);
 				this->packets.push_back(thisPacket);
 			}
 		}
@@ -129,12 +129,26 @@ void CGDM_Interface::importTypesFromXmlDoc(X_Node *types)
 	}
 }
 
-/* Private Functions ******************************************************/
-void importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_Node *thisEnumX)
+//TODO move to public methods
+void CGDM_Interface::findBaseTypeOfEnum(CGDM_Field *target,std::string EnumType)
 {
-	if (thisEnumX->nodes.size()>0)
+	for (auto & thisEnum : this->typeEnums)
 	{
-		for (auto & thisNode : thisEnumX->nodes)
+		if (thisEnum.name==target->type)
+		{
+			target->enumBaseType=thisEnum.baseType;
+			break;
+		}
+	}
+}
+
+/* Private Functions ******************************************************/
+//move to private methods
+void CGDM_Interface::importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_Node *theseFieldsX)
+{
+	if (theseFieldsX->nodes.size()>0)
+	{
+		for (auto & thisNode : theseFieldsX->nodes)
 		{
 			if (thisNode.name=="field")
 			{
@@ -142,7 +156,26 @@ void importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_Node *thisEnumX)
 				thisField.name=thisNode.getContentOfAttribute("name");
 				thisField.type=thisNode.getContentOfAttribute("type");
 				thisField.isStructure=false;
-				//TODO loads of things missing reading
+				thisField.isUserCode=false;
+				thisField.hasMultiplicity=false;
+				if (thisField.type.find("Enum")==0)
+				{
+					thisField.isEnum=true;
+					thisField.isNative=false;
+					this->findBaseTypeOfEnum(&thisField,thisField.type);
+					//TODO std::string enumBaseType;
+				}
+				else
+				{
+					thisField.isEnum=false;
+					thisField.isNative=true;
+					thisField.enumBaseType=thisField.type;
+				}
+				if (thisNode.getContentOfAttribute("multiplicityFromField")!="")
+				{
+					thisField.hasMultiplicity=true;
+					thisField.multiplicityFromField=thisNode.getContentOfAttribute("multiplicityFromField");
+				}
 				fields->push_back(thisField);
 			}
 			else if (thisNode.name=="structureField")
@@ -156,7 +189,14 @@ void importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_Node *thisEnumX)
 				else
 					thisField.isUserCode=false;
 				thisField.isStructure=true;
-
+				thisField.isNative=false;
+				thisField.isEnum=false;
+				thisField.hasMultiplicity=false;
+				if (thisNode.getContentOfAttribute("multiplicityFromField")!="")
+				{
+					thisField.hasMultiplicity=true;
+					thisField.multiplicityFromField=thisNode.getContentOfAttribute("multiplicityFromField");
+				}
 				fields->push_back(thisField);
 			}
 		}

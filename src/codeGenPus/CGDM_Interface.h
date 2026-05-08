@@ -34,6 +34,7 @@ class CGDM_Interface {       // The class
     CGDM_Interface();
     void importDefinitionFromXmlDoc(X_Document *doc);
     void print();
+    void findBaseTypeOfEnum(CGDM_Field *target,std::string EnumType);
 
   private:
     /* Attributes ******************************************************/
@@ -42,6 +43,8 @@ class CGDM_Interface {       // The class
     /* Methods ******************************************************/
     void importTypesFromXmlDoc(X_Node *types);
     void importPacketsFromXmlDoc(X_Node *packets);
+    void importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_Node *thisEnumX);
+
 };
 
 #endif
