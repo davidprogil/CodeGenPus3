@@ -37,12 +37,12 @@ void CGDM_Interface::importDefinitionFromXmlDoc(X_Document *doc)
 			}
 			else if (thisNode.name=="types")
 			{
-				printf("debug importDefinitionFromXmlDoc found types\n");
+				//printf("debug importDefinitionFromXmlDoc found types\n");
 				this->importTypesFromXmlDoc(&thisNode);
 			}
 			else if (thisNode.name=="packets")
 			{
-				printf("debug importDefinitionFromXmlDoc found packets\n");
+				//printf("debug importDefinitionFromXmlDoc found packets\n");
 				this->importPacketsFromXmlDoc(&thisNode);
 			}
 		}
@@ -120,7 +120,7 @@ void CGDM_Interface::importTypesFromXmlDoc(X_Node *types)
 			else if (thisNode.name=="structureField")
 			{
 				CGDM_TypeStructure thisStructure;
-				printf("debug importDefinitionFromXmlDoc found structureField %s\n",thisNode.getContentOfAttribute("name").c_str());
+				//printf("debug importDefinitionFromXmlDoc found structureField %s\n",thisNode.getContentOfAttribute("name").c_str());
 				thisStructure.name=thisNode.getContentOfAttribute("name");
 				importFieldsFromXmlDoc(&thisStructure.fields,&thisNode);
 				this->typeStructures.push_back(thisStructure);
@@ -163,7 +163,6 @@ void CGDM_Interface::importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_
 					thisField.isEnum=true;
 					thisField.isNative=false;
 					this->findBaseTypeOfEnum(&thisField,thisField.type);
-					//TODO std::string enumBaseType;
 				}
 				else
 				{
@@ -181,7 +180,7 @@ void CGDM_Interface::importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_
 			else if (thisNode.name=="structureField")
 			{
 				CGDM_Field thisField;
-				printf("debug reading %s %s\n",thisNode.getContentOfAttribute("name").c_str(),thisNode.getContentOfAttribute("isUserCode").c_str());
+				//printf("debug reading %s %s\n",thisNode.getContentOfAttribute("name").c_str(),thisNode.getContentOfAttribute("isUserCode").c_str());
 				thisField.name=thisNode.getContentOfAttribute("name");
 				thisField.type=thisNode.getContentOfAttribute("type");
 				if (thisNode.getContentOfAttribute("isUserCode")=="true")
