@@ -172,14 +172,25 @@ void GenerateFieldDeclaration(FILE *fh,CGDM_Field *thisField,std::vector <CGDM_F
 			if (thisEnum.name==relatedType)
 			{
 				//go into all enumElements
+				std::vector <std::string> types;
 				for (auto & thisEnumElement : thisEnum.elements)
 				{
 					if (thisEnumElement.relatedType!="null")
 					{
-						fprintf(fh,"   %s_%s_t %s;\n",interface->preffix.c_str(),thisEnumElement.relatedType.c_str(),thisEnumElement.relatedType.c_str());
+						bool isFound=false;
+
+						for (auto & thisString : types)
+						{
+							if (thisString==thisEnumElement.relatedType) isFound=true;
+						}
+						//if not repeated
+						if (isFound==false)
+						{
+							types.push_back(thisEnumElement.relatedType);
+							fprintf(fh,"   %s_%s_t %s;\n",interface->preffix.c_str(),thisEnumElement.relatedType.c_str(),thisEnumElement.relatedType.c_str());
+						}
 					}
 				}
-
 			}
 		}
 		fprintf(fh,"  }");
