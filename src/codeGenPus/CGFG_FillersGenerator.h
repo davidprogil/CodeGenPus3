@@ -3,39 +3,31 @@
 /* Project: Interface Tool */
 /* Author: David Gil */
 /*****************************************************************************/
-#ifndef _CGDM_Field_
-#define _CGDM_Field_
+#ifndef _CGFG_FillersGenerator_
+#define _CGFG_FillersGenerator_
 
 /* System Includes ***********************************************************/
 #include <string>
 
 /* Application Includes ******************************************************/
-/* none */
+#include "CGDM_Interface.h"
 
 /* Public Functions ******************************************************/
-/* none */
-
+void fprintfCopyright(FILE *fh);
+void fprintfLabel(FILE *fh,std::string label);
+std::string stringToUpperString(std::string in);
 /* Public Types ******************************************************/
-class CGDM_Field {       // The class
+class CGFG_FillersGenerator {       // The class
   public:
     /* Attributes ******************************************************/
-    std::string name;
-    std::string type;
-	bool isNative;
-	bool isEnum;
-	bool isUserCode;
-	bool isStructure;
-	std::string enumBaseType;
-	bool hasMultiplicity;
-	std::string multiplicityFromField;
-    bool hasRestriction;
-    std::string typeFromField;
-    //restrictions
-    std::string restrictionMaxInclusive;
-    //TODO other restrictions
+    FILE *fhHeader;
+    FILE *fhSource;
+    std::string preffix;
     /* Methods ******************************************************/
-    CGDM_Field();
-    void print();
+    CGFG_FillersGenerator(FILE *fhHeader_p,FILE *fhSource_p,std::string preffix_p);
+    void GenerateHeader(CGDM_Interface *interface);
+    void GenerateSource(CGDM_Interface *interface);
+
 
   private:
     /* Attributes ******************************************************/

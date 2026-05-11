@@ -25,6 +25,7 @@ class CGDM_Interface {       // The class
   public:
     /* Attributes ******************************************************/
     std::string description;
+    std::string preffix;
 
     std::vector <CGDM_TypeEnum> typeEnums;
     std::vector <CGDM_TypeStructure> typeStructures;

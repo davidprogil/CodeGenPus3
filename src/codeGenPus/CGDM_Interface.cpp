@@ -12,6 +12,7 @@
 
 /* Private prototypes ********************************************************/
 
+//TODO separate XML code to different class
 
 /* Public Methods  ***********************************************************/
 CGDM_Interface::CGDM_Interface()
@@ -175,6 +176,24 @@ void CGDM_Interface::importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_
 					thisField.hasMultiplicity=true;
 					thisField.multiplicityFromField=thisNode.getContentOfAttribute("multiplicityFromField");
 				}
+				if (thisNode.getContentOfAttribute("typeFromField")!="")
+				{
+					thisField.typeFromField=thisNode.getContentOfAttribute("typeFromField");
+				}
+				for (auto & thisFieldNode : thisNode.nodes)
+				{
+					//restrictions
+					if (thisFieldNode.name=="restrictionDetails")
+					{
+						thisField.hasRestriction=true;
+						if (thisFieldNode.getContentOfSubNode("maxInclusive")!="")
+						{
+							//printf("debug field restrictions maxInclusive %s \n",thisField.name.c_str());
+							thisField.restrictionMaxInclusive=thisFieldNode.getContentOfSubNode("maxInclusive");
+						}
+					}
+
+				}
 				fields->push_back(thisField);
 			}
 			else if (thisNode.name=="structureField")
@@ -195,6 +214,24 @@ void CGDM_Interface::importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_
 				{
 					thisField.hasMultiplicity=true;
 					thisField.multiplicityFromField=thisNode.getContentOfAttribute("multiplicityFromField");
+				}
+				if (thisNode.getContentOfAttribute("typeFromField")!="")
+				{
+					thisField.typeFromField=thisNode.getContentOfAttribute("typeFromField");
+				}
+				for (auto & thisFieldNode : thisNode.nodes)
+				{
+					//restrictions
+					if (thisFieldNode.name=="restrictionDetails")
+					{
+						thisField.hasRestriction=true;
+						if (thisFieldNode.getContentOfSubNode("maxInclusive")!="")
+						{
+							//printf("debug field restrictions maxInclusive %s \n",thisField.name.c_str());
+							thisField.restrictionMaxInclusive=thisFieldNode.getContentOfSubNode("maxInclusive");
+						}
+					}
+
 				}
 				fields->push_back(thisField);
 			}
