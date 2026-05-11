@@ -14,6 +14,9 @@
 #include "CGFG_FillersGenerator.h"
 
 void GenerateFieldDeclaration(FILE *fh,CGDM_Field *field,std::vector <CGDM_Field>  *fields,CGDM_Interface *interface);
+void WriteFunctionSignature(FILE *fh,CGDM_Packet *packet,CGDM_Interface *interface);
+void WriteSizersSignature(FILE *fh,CGDM_Interface *interface,bool isPrototype);
+
 /* Public Methods  ***********************************************************/
 CGFG_FillersGenerator::CGFG_FillersGenerator(FILE *fhHeader_p,FILE *fhSource_p,std::string preffix_p)
 { // Constructor
@@ -53,6 +56,10 @@ void CGFG_FillersGenerator::GenerateHeader(CGDM_Interface *interface)
 	for (auto & thisPacket : interface->packets)
 	{
 		fprintf(this->fhHeader,"#define %s_%s_PACKETID (%s)\n",this->preffix.c_str(),stringToUpperString(thisPacket.name).c_str(),thisPacket.id.c_str());
+		fprintf(this->fhHeader,"#define %s_%s_SERVICE ((%s_%s_PACKETID & (0xFF00)) >> 8)\n",this->preffix.c_str(),stringToUpperString(thisPacket.name).c_str(),this->preffix.c_str(),stringToUpperString(thisPacket.name).c_str());
+		fprintf(this->fhHeader,"#define %s_%s_SUBSERVICE (%s_%s_PACKETID & (0x00FF))\n",this->preffix.c_str(),stringToUpperString(thisPacket.name).c_str(),this->preffix.c_str(),stringToUpperString(thisPacket.name).c_str());
+
+
 	}
 	fprintf(this->fhHeader,"\n");
 
@@ -74,7 +81,7 @@ void CGFG_FillersGenerator::GenerateHeader(CGDM_Interface *interface)
 		}
 		std::string label=thisEnum.elements.at(0).label;
 		std::string abbrev2=label.substr(0,label.find('_'));
-		fprintf(this->fhHeader,"  %s_%s_NB=%d;\n",preffix.c_str(),abbrev2.c_str(),elementsNo);
+		fprintf(this->fhHeader,"  %s_%s_NB=%d\n",preffix.c_str(),abbrev2.c_str(),elementsNo);
 
 		fprintf(this->fhHeader,"} %s_%s_t;\n",this->preffix.c_str(),thisEnum.name.c_str());
 		fprintf(this->fhHeader,"\n");
@@ -113,15 +120,23 @@ void CGFG_FillersGenerator::GenerateHeader(CGDM_Interface *interface)
 	fprintf(this->fhHeader,"\n");
 	// prototypes /////////////////////////////////////////////////////////////////////////
 	printf("\tPrototypes...\n");
-	//TODO
+	//packets
+	for (auto & thisPacket : interface->packets)
+	{
+		WriteFunctionSignature(this->fhHeader,&thisPacket,interface);
+		fprintf(this->fhHeader,";\n");
+	}
 	fprintf(this->fhHeader,"\n");
-
-
-
+	//sizers
+	WriteSizersSignature(this->fhHeader,interface,true);
+	fprintf(this->fhHeader,"\n");
+	//end if
+	fprintf(this->fhHeader,"#endif\n");
 }
 
 void CGFG_FillersGenerator::GenerateSource(CGDM_Interface *interface)
 {
+	//TODO
 
 }
 /* Public Functions ******************************************************/
@@ -145,13 +160,66 @@ void fprintfCopyright(FILE *fh)
 	fprintf(fh,"/* xxxxxxxx@xxxxx.xxx                                                          */\n");
 	fprintf(fh,"/*******************************************************************************/\n");
 }
+//t.thiam@dasholding.ae
 
 /* Private Methods  ***********************************************************/
+void WriteSizersSignature(FILE *fh,CGDM_Interface *interface,bool isPrototype)
+{
+
+
+	for (auto & thisEnum : interface->typeEnums)
+	{
+		//uint16_t ASWF_GetSizeForEnumFid(ASW_EnumFid_t valueEnumFid);
+		fprintf(fh,"uint16_t %sF_GetSizeFor%s(%s_%s_t value%s)",interface->preffix.c_str(),thisEnum.name.c_str(),interface->preffix.c_str(),thisEnum.name.c_str(),thisEnum.name.c_str());
+
+		if (isPrototype)
+		{
+			fprintf(fh,";\n");
+		}
+		else
+		{
+			fprintf(fh,"\n");
+		}
+	}
+}
+void WriteFunctionSignature(FILE *fh,CGDM_Packet *packet,CGDM_Interface *interface)
+{
+	fprintf(fh,"void %sF_Fill%s(ASW_%s_t *target",interface->preffix.c_str(),packet->name.c_str(),packet->name.c_str());
+	for (auto & thisField : packet->fields)
+	{
+		//native or enum
+		if (((thisField.isNative)||(thisField.isEnum))&&(thisField.hasMultiplicity==false))
+		{
+			fprintf(fh,", %s_t %s",thisField.type.c_str(),thisField.name.c_str());
+		}
+		//structure or multiplicity
+		else if ((thisField.isStructure)||(thisField.hasMultiplicity))
+		{
+			fprintf(fh,", %s_t *%s",thisField.type.c_str(),thisField.name.c_str());
+		}
+		else if (thisField.type=="variable")
+		{
+		//variable type
+		fprintf(fh,", void *%s,uint16_t %sNb",thisField.name.c_str(),thisField.name.c_str());
+		//void *failureInfo, uint16_t failureInfoNb);
+		}
+	}
+
+
+	fprintf(fh,")");
+}
 void GenerateFieldDeclaration(FILE *fh,CGDM_Field *thisField,std::vector <CGDM_Field>  *fields,CGDM_Interface *interface)
 {
 	if (thisField->type!="variable")
 	{
+		if (thisField->isEnum==false)
+		{
 		fprintf(fh,"  %s_t ",thisField->type.c_str());
+		}
+		else
+		{
+			fprintf(fh,"  %s_t ",thisField->enumBaseType.c_str());
+		}
 	}
 	else
 	{
