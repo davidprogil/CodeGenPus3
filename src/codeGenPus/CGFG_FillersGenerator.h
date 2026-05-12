@@ -15,6 +15,7 @@
 /* Public Functions ******************************************************/
 void fprintfCopyright(FILE *fh);
 void fprintfLabel(FILE *fh,std::string label);
+void fprintfSystemIncldudes(FILE *fh);
 std::string stringToUpperString(std::string in);
 /* Public Types ******************************************************/
 class CGFG_FillersGenerator {       // The class

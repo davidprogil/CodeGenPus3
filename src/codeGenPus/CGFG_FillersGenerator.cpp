@@ -136,8 +136,73 @@ void CGFG_FillersGenerator::GenerateHeader(CGDM_Interface *interface)
 
 void CGFG_FillersGenerator::GenerateSource(CGDM_Interface *interface)
 {
+	printf("\tcopyright...\n");
+	interface->preffix=this->preffix;
+	fprintfCopyright(this->fhSource);
+	fprintf(this->fhSource,"\n");
+	fprintfSystemIncldudes(this->fhSource);
+	fprintf(this->fhSource,"\n");
+	fprintfLabel(this->fhSource,"component includes");
+	fprintf(this->fhSource,"#include <%s_FillersUser.h>\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"#include <%s_Fillers.h>\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"\n");
+	fprintfLabel(this->fhSource,"local macros");
+	fprintf(this->fhSource,"/* none */\n");
+	fprintf(this->fhSource,"\n");
+	fprintfLabel(this->fhSource,"local types");
+	fprintf(this->fhSource,"/* none */\n");
+	fprintf(this->fhSource,"\n");
+	fprintfLabel(this->fhSource,"public variables");
+	fprintf(this->fhSource,"/* none */\n");
+	fprintf(this->fhSource,"\n");
+	fprintfLabel(this->fhSource,"local variables");
+	fprintf(this->fhSource,"/* none */\n");
+	fprintf(this->fhSource,"\n");
+	fprintfLabel(this->fhSource,"local prototypes");
+	fprintf(this->fhSource,"/* none */\n");
+	fprintf(this->fhSource,"\n");
+	fprintfLabel(this->fhSource,"public functions");
+	//fillers
+	printf("\tfillers structures...\n");
 	//TODO
+	printf("\tfillers packets... %ld\n",interface->packets.size());
+	//WriteFunctionSignature(FILE *fh,CGDM_Packet *packet,CGDM_Interface *interface)
+	for (auto & thisPacket : interface->packets)
+	{
+		WriteFunctionSignature(this->fhSource,&thisPacket,interface);
+		fprintf(this->fhSource,"\n");
+		fprintf(this->fhSource,"{\n");
+		for (auto & thisField : thisPacket.fields)
+		{
+			if (((thisField.isStructure)||(thisField.isUserCode))&&(thisField.type!="variable"))
+			{
+				fprintf(this->fhSource,"  memcpy(&target->%s, %s, sizeof(%s_t));\n",thisField.name.c_str(),thisField.name.c_str(),thisField.type.c_str());
+			}
+			else if (thisField.hasMultiplicity)
+			{
+				fprintf(this->fhSource,"  if (%s != NULL && %s > 0) {\n",thisField.name.c_str(),thisField.multiplicityFromField.c_str());
+				fprintf(this->fhSource,"    memcpy(&target->%s, %s, sizeof(uint8_t) * %s);\n",thisField.name.c_str(),thisField.name.c_str(),thisField.multiplicityFromField.c_str());
+				fprintf(this->fhSource,"  }\n");
+			}
+			else if (thisField.type!="variable")//native or enum
+			{
+				fprintf(this->fhSource,"  target->%s = %s;\n",thisField.name.c_str(),thisField.name.c_str());
+			}
+			if (thisField.type=="variable")
+			{
+				fprintf(this->fhSource,"  if (%s != NULL && %sNb > 0) {\n",thisField.name.c_str(),thisField.name.c_str());
+				fprintf(this->fhSource,"    memcpy(&target->%s, %s, %sNb);\n",thisField.name.c_str(),thisField.name.c_str(),thisField.name.c_str());
+				fprintf(this->fhSource,"  }\n");
 
+			}
+
+		}
+		fprintf(this->fhSource,"}\n");
+		fprintf(this->fhSource,"\n");
+	}
+	//sizers
+	printf("\tsizers...\n");
+	WriteSizersSignature(this->fhSource,interface,false);
 }
 /* Public Functions ******************************************************/
 std::string stringToUpperString(std::string input_text)
@@ -160,7 +225,14 @@ void fprintfCopyright(FILE *fh)
 	fprintf(fh,"/* xxxxxxxx@xxxxx.xxx                                                          */\n");
 	fprintf(fh,"/*******************************************************************************/\n");
 }
-//t.thiam@dasholding.ae
+
+void fprintfSystemIncldudes(FILE *fh)
+{
+	fprintfLabel(fh,"system includes");
+	fprintf(fh,"#include <stdlib.h>\n");
+	fprintf(fh,"#include <stdio.h>\n");
+	fprintf(fh,"#include <string.h>\n");
+}
 
 /* Private Methods  ***********************************************************/
 void WriteSizersSignature(FILE *fh,CGDM_Interface *interface,bool isPrototype)
@@ -169,6 +241,7 @@ void WriteSizersSignature(FILE *fh,CGDM_Interface *interface,bool isPrototype)
 
 	for (auto & thisEnum : interface->typeEnums)
 	{
+		//TODO if it has any related type
 		//uint16_t ASWF_GetSizeForEnumFid(ASW_EnumFid_t valueEnumFid);
 		fprintf(fh,"uint16_t %sF_GetSizeFor%s(%s_%s_t value%s)",interface->preffix.c_str(),thisEnum.name.c_str(),interface->preffix.c_str(),thisEnum.name.c_str(),thisEnum.name.c_str());
 
@@ -178,6 +251,26 @@ void WriteSizersSignature(FILE *fh,CGDM_Interface *interface,bool isPrototype)
 		}
 		else
 		{
+			fprintf(fh,"\n");
+			fprintf(fh,"{\n");
+			fprintf(fh,"  uint16_t size = 0;\n");
+			fprintf(fh,"  switch (value%s)\n",thisEnum.name.c_str());
+			fprintf(fh,"  {\n");
+			for (auto & thisEnumElement : thisEnum.elements)
+			{
+				if (thisEnumElement.relatedType!="null")
+				{
+					fprintf(fh,"    case %s_%s:\n",interface->preffix.c_str(),thisEnumElement.label.c_str());
+					fprintf(fh,"      size = sizeof(%s_%s_t);\n",interface->preffix.c_str(),thisEnumElement.relatedType.c_str());
+					fprintf(fh,"      break;\n");
+				}
+			}
+			fprintf(fh,"    default:\n");
+			fprintf(fh,"      size = 0;\n");
+			fprintf(fh,"      break;\n");
+			fprintf(fh,"  }\n");
+			fprintf(fh,"  return size;\n");
+			fprintf(fh,"}\n");
 			fprintf(fh,"\n");
 		}
 	}

@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 			printf("generating header... \n");
 			fillersGenerator.GenerateHeader(&interface);
 			printf("generating source... \n");
-			//TODO
+			fillersGenerator.GenerateSource(&interface);
 		}
 
 		if (headerFh!=NULL) fclose(headerFh);
