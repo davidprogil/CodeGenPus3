@@ -152,7 +152,7 @@
 		<sgi:structureField name="HkCamStatus">
 			<sgi:field name="bufferedNo" type="uint8"></sgi:field>
 			<sgi:field name="storedNo" type="uint16"></sgi:field>
-			<sgi:field name="bufferedNo" type="uint16"></sgi:field>
+			<sgi:field name="downloadedNo" type="uint16"></sgi:field>
 				<sgi:field name="wacTm1_1No" type="uint16"></sgi:field>
 				<sgi:field name="wacTm1_2No" type="uint16"></sgi:field>
 				<sgi:field name="wacTm1_7No" type="uint16"></sgi:field>

@@ -187,21 +187,30 @@ void WriteFunctionSignature(FILE *fh,CGDM_Packet *packet,CGDM_Interface *interfa
 	fprintf(fh,"void %sF_Fill%s(ASW_%s_t *target",interface->preffix.c_str(),packet->name.c_str(),packet->name.c_str());
 	for (auto & thisField : packet->fields)
 	{
-		//native or enum
-		if (((thisField.isNative)||(thisField.isEnum))&&(thisField.hasMultiplicity==false))
+		//type
+		if (thisField.type=="variable")
 		{
-			fprintf(fh,", %s_t %s",thisField.type.c_str(),thisField.name.c_str());
+			fprintf(fh,", void ");
 		}
-		//structure or multiplicity
-		else if ((thisField.isStructure)||(thisField.hasMultiplicity))
+		else if (thisField.isEnum)
 		{
-			fprintf(fh,", %s_t *%s",thisField.type.c_str(),thisField.name.c_str());
+			fprintf(fh,", %s_%s_t ",interface->preffix.c_str(),thisField.type.c_str());
 		}
-		else if (thisField.type=="variable")
+		else
 		{
-		//variable type
-		fprintf(fh,", void *%s,uint16_t %sNb",thisField.name.c_str(),thisField.name.c_str());
-		//void *failureInfo, uint16_t failureInfoNb);
+			fprintf(fh,", %s_t ",thisField.type.c_str());
+		}
+		//pointer
+		if ((thisField.type=="variable")||(thisField.hasMultiplicity)||(thisField.isStructure)||(thisField.isUserCode))
+		{
+			fprintf(fh,"*");
+		}
+		//name
+		fprintf(fh,"%s",thisField.name.c_str());
+		//after
+		if (thisField.type=="variable")
+		{
+			fprintf(fh,", uint16_t %sNb",thisField.name.c_str());
 		}
 	}
 
@@ -214,7 +223,7 @@ void GenerateFieldDeclaration(FILE *fh,CGDM_Field *thisField,std::vector <CGDM_F
 	{
 		if (thisField->isEnum==false)
 		{
-		fprintf(fh,"  %s_t ",thisField->type.c_str());
+			fprintf(fh,"  %s_t ",thisField->type.c_str());
 		}
 		else
 		{
