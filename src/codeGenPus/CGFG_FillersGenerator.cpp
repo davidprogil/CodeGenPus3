@@ -234,6 +234,37 @@ void fprintfSystemIncldudes(FILE *fh)
 	fprintf(fh,"#include <string.h>\n");
 }
 
+
+CGDM_TypeEnum *getEnumByName(std::string name,CGDM_Interface *interface)
+{
+	CGDM_TypeEnum *returnEnum=NULL;
+
+	for (auto & thisEnum : interface->typeEnums)
+	{
+		if (thisEnum.name==name)
+		{
+			returnEnum=&thisEnum;
+			break;
+		}
+	}
+
+	return returnEnum;
+}
+
+CGDM_Field *getFieldFromName(std::string name,std::vector <CGDM_Field>  *brotherFields)
+{
+	CGDM_Field *returnField=NULL;
+	for (auto & thisField : *brotherFields)
+	{
+		if (thisField.name==name)
+		{
+			returnField=&thisField;
+			break;
+		}
+	}
+
+	return returnField;
+}
 /* Private Methods  ***********************************************************/
 void WriteSizersSignature(FILE *fh,CGDM_Interface *interface,bool isPrototype)
 {

@@ -19,6 +19,8 @@ void fprintfCopyright(FILE *fh);
 void fprintfLabel(FILE *fh,std::string label);
 void fprintfSystemIncldudes(FILE *fh);
 std::string stringToUpperString(std::string in);
+CGDM_Field *getFieldFromName(std::string name,std::vector <CGDM_Field>  *brotherFields);
+CGDM_TypeEnum *getEnumByName(std::string name,CGDM_Interface *interface);
 //eof from CGFG_FillersGenerator
 
 
@@ -130,37 +132,7 @@ void CGFG_SerializersGenerator::GenerateSource(CGDM_Interface *interface)
 /* none */
 
 /* Private Functions ******************************************************/
-//TODO prototype and move to Fillers
-CGDM_TypeEnum *getEnumByName(std::string name,CGDM_Interface *interface)
-{
-	CGDM_TypeEnum *returnEnum=NULL;
 
-	for (auto & thisEnum : interface->typeEnums)
-	{
-		if (thisEnum.name==name)
-		{
-			returnEnum=&thisEnum;
-			break;
-		}
-	}
-
-	return returnEnum;
-}
-//TODO prototype and move to Fillers
-CGDM_Field *getFieldFromName(std::string name,std::vector <CGDM_Field>  *brotherFields)
-{
-	CGDM_Field *returnField=NULL;
-	for (auto & thisField : *brotherFields)
-	{
-		if (thisField.name==name)
-		{
-			returnField=&thisField;
-			break;
-		}
-	}
-
-	return returnField;
-}
 //TODO prototype
 void generateFieldSerializer(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interface,std::string *multiplicityIndex,std::vector <CGDM_Field>  *brotherFields)
 {
