@@ -69,3 +69,5 @@ Testing/
 .cache/
 /reader
 /generatorFillers
+/generatorDeserializers
+/generatorSerializers
