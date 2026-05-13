@@ -129,7 +129,7 @@ void CGFG_DeserializersGenerator::GenerateSource(CGDM_Interface *interface)
 	printf("\tpackets... %ld\n",interface->packets.size());
 	fprintfLabel(this->fhSource,"public functions");
 	//special function
-	fprintf(this->fhSource,"%s_DeserializerFunction_t *%s_GetDeserializerFunction(uint16_t packetId)\n",interface->preffix.c_str(),interface->preffix.c_str());
+	fprintf(this->fhSource,"%s_DeserializerFunction_t *%sD_GetDeserializerFunction(uint16_t packetId)\n",interface->preffix.c_str(),interface->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	fprintf(this->fhSource,"  %s_DeserializerFunction_t *deserializer = NULL;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"\n");
