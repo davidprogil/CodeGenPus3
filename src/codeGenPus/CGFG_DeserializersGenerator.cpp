@@ -25,7 +25,7 @@ CGDM_TypeEnum *getEnumByName(std::string name,CGDM_Interface *interface);
 
 
 //privates
-void generateSerializersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
+void generateDeserializersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
 void generateSerializersStructuresFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
 
 /* Public Methods  ***********************************************************/
@@ -38,48 +38,49 @@ CGFG_DeserializersGenerator::CGFG_DeserializersGenerator(FILE *fhHeader_p,FILE *
 
 void CGFG_DeserializersGenerator::GenerateHeader(CGDM_Interface *interface)
 {
-//	printf("\tcopyright...\n");
-//	interface->preffix=this->preffix;
-//	fprintfCopyright(this->fhHeader);
-//	fprintf(this->fhHeader,"\n");
-//	fprintf(this->fhHeader,"#ifndef %sF_Serializers_H\n",this->preffix.c_str());
-//	fprintf(this->fhHeader,"#define %sF_Serializers_H\n",this->preffix.c_str());
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"system includes");
-//	fprintf(this->fhHeader,"/* none */");
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"application includes");
-//	fprintf(this->fhHeader,"#include <myTypes.h>");
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"component includes");
-//	fprintf(this->fhHeader,"#include <%s_Fillers.h>\n",this->preffix.c_str());
-//	fprintf(this->fhHeader,"#include <%s_SerializersUser.h>\n",this->preffix.c_str());
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"macros");
-//	fprintf(this->fhHeader,"/* none */\n");
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"macros");
-//	fprintf(this->fhHeader,"/* none */\n");
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"types");
-//	fprintf(this->fhHeader,"/* none */\n");
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"public variables");
-//	fprintf(this->fhHeader,"/* none */\n");
-//	fprintf(this->fhHeader,"\n");
-//
-//	fprintfLabel(this->fhHeader,"public functions");
-//	generateSerializersFunctions(this->fhHeader,interface,true);
-//	fprintf(this->fhHeader,"\n");
-//	//end if
-//	fprintf(this->fhHeader,"#endif\n");
+	printf("\tcopyright...\n");
+	interface->preffix=this->preffix;
+	fprintfCopyright(this->fhHeader);
+	fprintf(this->fhHeader,"\n");
+	fprintf(this->fhHeader,"#ifndef %sF_Serializers_H\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"#define %sF_Serializers_H\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"system includes");
+	fprintf(this->fhHeader,"/* none */");
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"application includes");
+	fprintf(this->fhHeader,"#include <myTypes.h>");
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"component includes");
+	fprintf(this->fhHeader,"#include <%s_Fillers.h>\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"#include <%s_DeserializersUser.h>\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"macros");
+	fprintf(this->fhHeader,"/* none */\n");
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"macros");
+	fprintf(this->fhHeader,"/* none */\n");
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"types");
+	fprintf(this->fhHeader,"/* none */\n");
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"public variables");
+	fprintf(this->fhHeader,"/* none */\n");
+	fprintf(this->fhHeader,"\n");
+
+	fprintfLabel(this->fhHeader,"public functions");
+	fprintf(this->fhHeader,"%s_DeserializerFunction_t *%sD_GetDeserializerFunction(uint16_t packetId);\n",interface->preffix.c_str(),interface->preffix.c_str());
+	generateDeserializersFunctions(this->fhHeader,interface,true);
+	fprintf(this->fhHeader,"\n");
+	//end if
+	fprintf(this->fhHeader,"#endif\n");
 }
 
 void CGFG_DeserializersGenerator::GenerateSource(CGDM_Interface *interface)
@@ -223,34 +224,35 @@ void generateSerializersStructuresFunctions(FILE *fh,CGDM_Interface *interface,b
 			fprintf(fh,"\n");
 		}
 	}
-}
+}*/
 
-void generateSerializersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
+void generateDeserializersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
 {
 
 	for (auto & thisPacket : interface->packets)
 	{
-		fprintf(fh,"bool_t %sS_Serialize%s(uint8_t *target, uint16_t targetNb, uint16_t *totalDataSize, %s_%s_t *structuredData)",interface->preffix.c_str(),thisPacket.name.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
+		fprintf(fh,"%s_DeserializerFunction_t %sD_Deserialize%s;",interface->preffix.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
+		//fprintf(fh,"bool_t %sS_Serialize%s(uint8_t *target, uint16_t targetNb, uint16_t *totalDataSize, %s_%s_t *structuredData)",interface->preffix.c_str(),thisPacket.name.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
 		if (isJustPrototype)
 		{
 			fprintf(fh,";\n");
 		}
 		else
 		{
-			fprintf(fh,"\n");
-			fprintf(fh,"{\n");
-			fprintf(fh,"  bool_t isValid = M_TRUE;\n");
-			fprintf(fh,"  *totalDataSize = 0;\n");
-			fprintf(fh,"\n");
-			for (auto & thisField : thisPacket.fields)
-			{
-				std::string multiplicityIndex="";
-				generateFieldSerializer(fh,&thisField,interface,&multiplicityIndex,&thisPacket.fields);
-			}
-			fprintf(fh,"\n");
-			fprintf(fh,"  return isValid;\n");
-			fprintf(fh,"}\n");
-			fprintf(fh,"\n");
+//			fprintf(fh,"\n");
+//			fprintf(fh,"{\n");
+//			fprintf(fh,"  bool_t isValid = M_TRUE;\n");
+//			fprintf(fh,"  *totalDataSize = 0;\n");
+//			fprintf(fh,"\n");
+//			for (auto & thisField : thisPacket.fields)
+//			{
+//				std::string multiplicityIndex="";
+//				generateFieldSerializer(fh,&thisField,interface,&multiplicityIndex,&thisPacket.fields);
+//			}
+//			fprintf(fh,"\n");
+//			fprintf(fh,"  return isValid;\n");
+//			fprintf(fh,"}\n");
+//			fprintf(fh,"\n");
 		}
 	}
-}*/
+}
