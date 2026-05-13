@@ -427,7 +427,7 @@ of its ACK settings.</sgi:description>
 			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
 			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
 			<sgi:field name="parameterId" type="EnumSequenceParameterId"></sgi:field>
-			<sgi:field name="parameterValue" type="uint8"></sgi:field>
+			<sgi:field name="parameterValue" type="uint32"></sgi:field>
 		</sgi:packet>
 		<!-- TC(128,5) - Save Parameters -->
 		<sgi:packet isCommand="true" name="SaveParameters" id="0x8005">
@@ -493,13 +493,13 @@ of its ACK settings.</sgi:description>
 			<sgi:field name="parameterId" type="EnumSequenceParameterId"></sgi:field>
 		</sgi:packet>
 		
-		<!-- TC(128,10) - Sequence Parameter Value -->
-		<sgi:packet isCommand="true" name="SequenceParametersValue" id="0x800A">
+		<!-- TM(128,10) - Sequence Parameter Value -->
+		<sgi:packet isCommand="false" name="SequenceParametersValue" id="0x800A">
 			<sgi:description>Response to TC(128,9)</sgi:description>
 			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
 			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true" />
 			<sgi:field name="parameterId" type="EnumSequenceParameterId"></sgi:field>
-			<sgi:field name="parameterValue" type="uint8"></sgi:field>
+			<sgi:field name="parameterValue" type="uint32"></sgi:field>
 		</sgi:packet>
 		
 	</sgi:packets>
