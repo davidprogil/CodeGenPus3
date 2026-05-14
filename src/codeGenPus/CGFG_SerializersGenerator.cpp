@@ -212,7 +212,6 @@ void generateSerializersStructuresFunctions(FILE *fh,CGDM_Interface *interface,b
 			fprintf(fh,"\n");
 			fprintf(fh,"{\n");
 			fprintf(fh,"  bool_t isValid = M_TRUE;\n");
-			fprintf(fh,"  *totalDataSize = 0;\n");
 			fprintf(fh,"\n");
 			for (auto & thisField : thisStructure.fields)
 			{
