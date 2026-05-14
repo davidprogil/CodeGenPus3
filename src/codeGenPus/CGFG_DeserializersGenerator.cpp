@@ -200,13 +200,13 @@ void generateFieldDeserializer(FILE *fh,CGDM_Field *thisField,CGDM_Interface *in
 	//user code or structure
 	else if ((thisField->isStructure)||(thisField->isUserCode))
 	{
-		fprintf(fh,"    isValid = %sDU_Deserialize%s(&structuredData->ccsdsPrimaryHeader, outputNb, walkingNb, packetRaw, packetRawNb);\n",interface->preffix.c_str(),thisField->type.c_str());
+		fprintf(fh,"    isValid = %sDU_Deserialize%s(&structuredData->%s, outputNb, walkingNb, packetRaw, packetRawNb);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
 	}
 	else if (((thisField->isNative)||(thisField->isEnum))&&(thisField->hasMultiplicity==false))
 	{
 		//native
-		//fprintf(fh,"    memcpy((uint8_t*)&structuredData->%s, &packetRaw[*walkingNb], sizeof(%s_t));\n",thisField->name.c_str(),thisField->enumBaseType.c_str());
-		fprintf(fh,"    structuredData->%s%s = (%s_t)packetRaw[*walkingNb];\n",thisField->name.c_str(),multiplicityIndex->c_str(),thisField->enumBaseType.c_str());
+		fprintf(fh,"    memcpy((uint8_t*)&structuredData->%s, &packetRaw[*walkingNb], sizeof(%s_t));\n",thisField->name.c_str(),thisField->enumBaseType.c_str());
+		//fprintf(fh,"    structuredData->%s%s = (%s_t)packetRaw[*walkingNb];\n",thisField->name.c_str(),multiplicityIndex->c_str(),thisField->enumBaseType.c_str());
 
 
 		if ((thisField->enumBaseType!="uint8")&&(thisField->enumBaseType!="int8"))
