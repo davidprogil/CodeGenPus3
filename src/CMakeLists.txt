@@ -69,3 +69,20 @@ add_executable(
 	"codeGenPus/CGFG_FillersGenerator.cpp"
 	"codeGenPus/CGFG_DeserializersGenerator.cpp"
 	)
+	
+add_executable(
+	generatorValidators
+	"generatorValidators.cpp"
+	"dgXmlLib/X_Attribute.cpp"
+	"dgXmlLib/X_Document.cpp"
+	"dgXmlLib/X_DocumentReader.cpp"
+	"dgXmlLib/X_Node.cpp"
+	"codeGenPus/CGDM_Field.cpp"
+	"codeGenPus/CGDM_Interface.cpp"
+	"codeGenPus/CGDM_Packet.cpp"
+	"codeGenPus/CGDM_TypeEnum.cpp"
+	"codeGenPus/CGDM_TypeEnumElement.cpp"
+	"codeGenPus/CGDM_TypeStructure.cpp"
+	"codeGenPus/CGFG_FillersGenerator.cpp"
+	"codeGenPus/CGVG_ValidatorsGenerator.cpp"
+	)
