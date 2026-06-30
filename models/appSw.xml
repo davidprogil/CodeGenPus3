@@ -52,6 +52,7 @@
 			<sgi:enumElement label="EID_IMAGE_DISCARDED" value="6" type="null"></sgi:enumElement>
 			<sgi:enumElement label="EID_SAVE_IMAGE" value="7" type="null"></sgi:enumElement>
 			<sgi:enumElement label="EID_SAVE_IMAGE_FAILED" value="8" type="null"></sgi:enumElement>
+			<sgi:enumElement label="EID_FPGA_ALGOS_FAILED" value="9" type="null"></sgi:enumElement>
 		</sgi:enum>
 		<sgi:enum name="EnumRebootReason" baseType="uint8">
 			<sgi:enumElement label="RS_UNKNOWN" value="0" type="null"></sgi:enumElement>
@@ -84,7 +85,7 @@
 			<sgi:enumElement label="CAM_NAC" value="1" type="null"></sgi:enumElement>
 		</sgi:enum>
 		<!-- Service 128 -->
-		<sgi:enum name="EnumMode" baseType="uint16">
+		<sgi:enum name="EnumMode" baseType="uint8">
 			<sgi:enumElement label="MODE_SAFE" value="0" type="null"></sgi:enumElement>
 			<sgi:enumElement label="MODE_ALIVENESS" value="1" type="null"></sgi:enumElement>
 			<sgi:enumElement label="MODE_FLYBY" value="2" type="null"></sgi:enumElement>
@@ -466,6 +467,12 @@ of its ACK settings.</sgi:description>
 			<sgi:field name="voltageRamp" type="uint8"></sgi:field>
 			<sgi:field name="withinThresholdPixelsNo" type="uint32"></sgi:field>
 			<sgi:field name="withinThresholdLinesNo" type="uint16"></sgi:field>
+			<sgi:field name="tenengradNorm" type="float32"></sgi:field>
+			<sgi:field name="edgeCntNorm" type="float32"></sgi:field>
+			<sgi:field name="dynRangeNorm" type="float32"></sgi:field>
+			<sgi:field name="blkCntNorm" type="float32"></sgi:field>
+			<sgi:field name="whtCntNorm" type="float32"></sgi:field>
+			<sgi:field name="score" type="float32"></sgi:field>        
 		</sgi:packet>
 		<!-- TM(128,8) - Image Segment -->
 		<sgi:packet isCommand="false" name="ImageSegment" id="0x8008">
@@ -500,6 +507,13 @@ of its ACK settings.</sgi:description>
 			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true" />
 			<sgi:field name="parameterId" type="EnumSequenceParameterId"></sgi:field>
 			<sgi:field name="parameterValue" type="uint32"></sgi:field>
+		</sgi:packet>
+		
+		<!-- TC(128,11) - Clear Image Storage -->
+		<sgi:packet isCommand="true" name="ClearImageStorage" id="0x800B">
+			<sgi:description>Clears the image storage</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTcSecondaryHeader" type="PUS_TcSecondaryHeader" isUserCode="true" />
 		</sgi:packet>
 		
 	</sgi:packets>

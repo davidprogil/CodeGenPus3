@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/interface" elementFormDefault="qualified" xmlns:sgi="http://www.example.org/interface">
+    <xsd:simpleType name="ValueRestrictionType">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:enumeration value="FREE"></xsd:enumeration>
+    		<xsd:enumeration value="FIXED"></xsd:enumeration>
+    		<xsd:enumeration value="RANGE"></xsd:enumeration>
+    		<xsd:enumeration value="ENUMERATION"></xsd:enumeration>
+    	</xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

@@ -31,7 +31,12 @@ class CGDM_Field {       // The class
     bool hasRestriction;
     std::string typeFromField;
     //restrictions
+    std::string restrictionFixedValue;
     std::string restrictionMaxInclusive;
+    std::string restrictionMaxExclusive;
+    std::string restrictionMinExclusive;
+    std::string restrictionMinInclusive;
+
     //TODO other restrictions
     /* Methods ******************************************************/
     CGDM_Field();

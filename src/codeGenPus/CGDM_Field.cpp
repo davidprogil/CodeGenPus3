@@ -49,8 +49,16 @@ void CGDM_Field::print()
 
 	if (this->hasRestriction)
 	{
-		std::cout << "   Max Inclusive: " << this->restrictionMaxInclusive << std::endl;
-		//TODO other restrictions
+		//std::string restrictionFixedValue;
+		if (this->restrictionFixedValue!="") std::cout << "   Fixed Value: " << this->restrictionFixedValue << std::endl;
+		//std::string restrictionMaxInclusive;
+		if (this->restrictionMaxInclusive!="") std::cout << "   Max Inclusive: " << this->restrictionMaxInclusive << std::endl;
+		//std::string restrictionMaxExclusive;
+		if (this->restrictionMaxExclusive!="") std::cout << "   Max Exclusive: " << this->restrictionMaxExclusive << std::endl;
+		//std::string restrictionMinExclusive;
+		if (this->restrictionMinExclusive!="") std::cout << "   Min Exclusive: " << this->restrictionMinExclusive << std::endl;
+		//std::string restrictionMinInclusive;
+		if (this->restrictionMinInclusive!="") std::cout << "   Min Inclusive: " << this->restrictionMinInclusive << std::endl;
 	}
 
 }

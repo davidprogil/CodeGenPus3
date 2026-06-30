@@ -9,10 +9,11 @@
 #include "CGDM_Interface.h"
 
 /* Application Includes ******************************************************/
+/* none */
 
 /* Private prototypes ********************************************************/
+/* none */
 
-//TODO separate XML code to different class
 
 /* Public Methods  ***********************************************************/
 CGDM_Interface::CGDM_Interface()
@@ -130,7 +131,6 @@ void CGDM_Interface::importTypesFromXmlDoc(X_Node *types)
 	}
 }
 
-//TODO move to public methods
 void CGDM_Interface::findBaseTypeOfEnum(CGDM_Field *target,std::string EnumType)
 {
 	for (auto & thisEnum : this->typeEnums)
@@ -186,11 +186,16 @@ void CGDM_Interface::importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_
 					if (thisFieldNode.name=="restrictionDetails")
 					{
 						thisField.hasRestriction=true;
-						if (thisFieldNode.getContentOfSubNode("maxInclusive")!="")
-						{
-							//printf("debug field restrictions maxInclusive %s \n",thisField.name.c_str());
-							thisField.restrictionMaxInclusive=thisFieldNode.getContentOfSubNode("maxInclusive");
-						}
+						//std::string restrictionFixedValue;
+						if (thisFieldNode.getContentOfSubNode("fixedValue")!="") thisField.restrictionFixedValue=thisFieldNode.getContentOfSubNode("fixedValue");
+						//std::string restrictionMaxInclusive;
+						if (thisFieldNode.getContentOfSubNode("maxInclusive")!="") thisField.restrictionMaxInclusive=thisFieldNode.getContentOfSubNode("maxInclusive");
+						//std::string restrictionMaxExclusive;
+						if (thisFieldNode.getContentOfSubNode("maxExclusive")!="") thisField.restrictionMaxExclusive=thisFieldNode.getContentOfSubNode("maxExclusive");
+						//std::string restrictionMinExclusive;
+						if (thisFieldNode.getContentOfSubNode("minExclusive")!="") thisField.restrictionMinExclusive=thisFieldNode.getContentOfSubNode("minExclusive");
+						//std::string restrictionMinInclusive;
+						if (thisFieldNode.getContentOfSubNode("minInclusive")!="") thisField.restrictionMinInclusive=thisFieldNode.getContentOfSubNode("minInclusive");
 					}
 
 				}
@@ -225,11 +230,18 @@ void CGDM_Interface::importFieldsFromXmlDoc(std::vector <CGDM_Field>  *fields,X_
 					if (thisFieldNode.name=="restrictionDetails")
 					{
 						thisField.hasRestriction=true;
-						if (thisFieldNode.getContentOfSubNode("maxInclusive")!="")
-						{
-							//printf("debug field restrictions maxInclusive %s \n",thisField.name.c_str());
-							thisField.restrictionMaxInclusive=thisFieldNode.getContentOfSubNode("maxInclusive");
-						}
+
+						//std::string restrictionFixedValue;
+						if (thisFieldNode.getContentOfSubNode("fixedValue")!="") thisField.restrictionFixedValue=thisFieldNode.getContentOfSubNode("fixedValue");
+						//std::string restrictionMaxInclusive;
+						if (thisFieldNode.getContentOfSubNode("maxInclusive")!="") thisField.restrictionMaxInclusive=thisFieldNode.getContentOfSubNode("maxInclusive");
+						//std::string restrictionMaxExclusive;
+						if (thisFieldNode.getContentOfSubNode("maxExclusive")!="") thisField.restrictionMaxExclusive=thisFieldNode.getContentOfSubNode("maxExclusive");
+						//std::string restrictionMinExclusive;
+						if (thisFieldNode.getContentOfSubNode("minExclusive")!="") thisField.restrictionMinExclusive=thisFieldNode.getContentOfSubNode("minExclusive");
+						//std::string restrictionMinInclusive;
+						if (thisFieldNode.getContentOfSubNode("minInclusive")!="") thisField.restrictionMinInclusive=thisFieldNode.getContentOfSubNode("minInclusive");
+
 					}
 
 				}

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/interface" elementFormDefault="qualified" xmlns:sgi="http://www.example.org/interface">
+    <xsd:complexType name="Interface">
+    	<xsd:sequence>
+    		<xsd:element name="description" type="xsd:string"></xsd:element>
+    		<xsd:element name="types" type="sgi:Types"></xsd:element>
+    		<xsd:element name="packets" type="sgi:Packets"></xsd:element>
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="Types">
+    	<xsd:sequence>
+    		<xsd:element name="enum" type="sgi:TypeEnum" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+    		<xsd:element name="structureField" type="sgi:TypeStructureField" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="Packets">
+    	<xsd:sequence>
+    		<xsd:element name="packet" type="sgi:Packet" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="TypeEnum">
+    	<xsd:sequence>
+    		<xsd:element name="enumElement" type="sgi:TypeEnumElement" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="baseType" type="xsd:string" use="required"></xsd:attribute>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="TypeEnumElement">
+    	<xsd:attribute name="value" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="label" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="type" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="Field">
+    	<xsd:sequence>
+    		<xsd:element name="restrictionDetails" type="sgi:ValueRestictionDetails" maxOccurs="1" minOccurs="0"></xsd:element>
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="type" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="restriction" type="sgi:ValueRestrictionType"></xsd:attribute>
+    	<xsd:attribute name="multiplicityFromField" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="fixedMultiplicity" type="xsd:nonNegativeInteger" use="optional"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ValueRestrictionType">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:enumeration value="FREE"></xsd:enumeration>
+    		<xsd:enumeration value="FIXED"></xsd:enumeration>
+    		<xsd:enumeration value="RANGE"></xsd:enumeration>
+    		<xsd:enumeration value="ENUMERATION"></xsd:enumeration>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ValueRestictionDetails">
+    	<xsd:sequence>
+    		<xsd:element name="fixedValue" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="maxExclusive" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="maxInclusive" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="minExclusive" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    		<xsd:element name="minInclusive" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="interface" type="sgi:Interface"></xsd:element>
+
+    <xsd:complexType name="Packet">
+    	<xsd:sequence>
+    		<xsd:choice maxOccurs="unbounded" minOccurs="1">
+                <xsd:element name="description" type="xsd:string"></xsd:element>
+                <xsd:element name="structureField" type="sgi:StructureField"></xsd:element>
+    			<xsd:element name="field" type="sgi:Field"></xsd:element>
+    		</xsd:choice>
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="id" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="isCommand" type="xsd:boolean" use="required"></xsd:attribute>
+    	<xsd:attribute name="isToGenerate" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="StructureField">
+    	<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="type" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="isUserCode" type="xsd:boolean"></xsd:attribute>
+    	<xsd:attribute name="typeFromField" type="xsd:string"></xsd:attribute>
+    	<xsd:attribute name="multiplicityFromField" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="TypeStructureField">
+    	<xsd:sequence>
+    		<xsd:element name="field" type="sgi:Field" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+    	</xsd:sequence>
+    	<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>
