@@ -63,8 +63,8 @@ int main(int argc, char *argv[]) {
 		//interface.print();
 
 		//generate
-		std::string headerFilename = outputFolder + "/" + abbreviation + "_Serializers.h";
-		std::string sourceFilename = outputFolder + "/" + "Serializers.c";
+		std::string headerFilename = outputFolder + "/" + abbreviation + "_Validators.h";
+		std::string sourceFilename = outputFolder + "/" + "Validators.c";
 		FILE *headerFh=fopen(headerFilename.c_str(),"w");
 		FILE *sourceFh=fopen(sourceFilename.c_str(),"w");
 

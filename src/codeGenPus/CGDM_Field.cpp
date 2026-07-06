@@ -17,7 +17,7 @@ CGDM_Field::CGDM_Field()
 	//this->name=name;
 	//this->content=description;
 	this->hasRestriction=false;
-	this->restrictionMaxInclusive="s";
+	//this->restrictionMaxInclusive="s";
 }
 
 void CGDM_Field::print()

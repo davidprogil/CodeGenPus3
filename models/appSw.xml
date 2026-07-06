@@ -148,7 +148,9 @@
 			<sgi:field name="processesNo" type="uint16"></sgi:field>
 			<sgi:field name="freeMemory" type="uint32"></sgi:field>
 			<sgi:field name="freeSpace" type="uint32"></sgi:field>
-			<sgi:field name="cpuLoad" type="float32"></sgi:field>	
+			<sgi:field name="cpuLoad" type="float32"></sgi:field>
+			<sgi:field name="apbInit" type="uint32"></sgi:field>	
+			<sgi:field name="apbCanaryRam" type="uint32"></sgi:field>
 		</sgi:structureField>
 		<sgi:structureField name="HkCamStatus">
 			<sgi:field name="bufferedNo" type="uint8"></sgi:field>

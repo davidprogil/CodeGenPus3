@@ -42,8 +42,8 @@ void CGFG_DeserializersGenerator::GenerateHeader(CGDM_Interface *interface)
 	interface->preffix=this->preffix;
 	fprintfCopyright(this->fhHeader);
 	fprintf(this->fhHeader,"\n");
-	fprintf(this->fhHeader,"#ifndef %sF_Serializers_H\n",this->preffix.c_str());
-	fprintf(this->fhHeader,"#define %sF_Serializers_H\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"#ifndef %sF_Deserializers_H\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"#define %sF_Deserializers_H\n",this->preffix.c_str());
 	fprintf(this->fhHeader,"\n");
 
 	fprintfLabel(this->fhHeader,"system includes");
