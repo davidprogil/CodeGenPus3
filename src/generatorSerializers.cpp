@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 	string outputFolder=".";
 	bool isValid=true;
 
-	if (argc!=3)
+	if (argc!=4)
 	{
 		printf("Warning: usage: executableName inputFile.xml abbreviation outputFolder, using default file\n");
 	}

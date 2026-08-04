@@ -18,10 +18,10 @@
 using namespace std;
 #include "./dgXmlLib/X_DocumentReader.h"
 #include "./codeGenPus/CGDM_Interface.h"
-#include "./codeGenPus/CGFG_DeserializersGenerator.h"
+#include "codeGenPus/CGPG_PrintersGenerator.h"
 
 int main(int argc, char *argv[]) {
-	cout << "!!!Generator Deserializers!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!!Generator Printers!!!" << endl; // prints !!!Hello World!!!
 
 	X_Document doc;
 	X_DocumentReader reader;
@@ -63,8 +63,8 @@ int main(int argc, char *argv[]) {
 		//interface.print();
 
 		//generate
-		std::string headerFilename = outputFolder + "/" + abbreviation + "_Deserializers.h";
-		std::string sourceFilename = outputFolder + "/" + "Deserializers.c";
+		std::string headerFilename = outputFolder + "/" + abbreviation + "_Printers.h";
+		std::string sourceFilename = outputFolder + "/" + "Printers.c";
 		FILE *headerFh=fopen(headerFilename.c_str(),"w");
 		FILE *sourceFh=fopen(sourceFilename.c_str(),"w");
 
@@ -83,11 +83,11 @@ int main(int argc, char *argv[]) {
 
 		if (isValid)
 		{
-			CGFG_DeserializersGenerator deserializersGenerator(headerFh,sourceFh,abbreviation);
+			CGPG_PrintersGenerator printersGenerator(headerFh,sourceFh,abbreviation);
 			printf("generating header... \n");
-			deserializersGenerator.GenerateHeader(&interface);
+			printersGenerator.GenerateHeader(&interface);
 			printf("generating source... \n");
-			deserializersGenerator.GenerateSource(&interface);
+			printersGenerator.GenerateSource(&interface);
 		}
 
 		if (headerFh!=NULL) fclose(headerFh);

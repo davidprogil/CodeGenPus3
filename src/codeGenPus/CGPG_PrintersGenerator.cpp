@@ -11,7 +11,7 @@
 
 
 /* Application Includes ******************************************************/
-#include "CGVG_ValidatorsGenerator.h"
+#include "CGPG_PrintersGenerator.h"
 #include "CGFG_FillersGenerator.h"
 
 //from CGFG_FillersGenerator
@@ -25,26 +25,27 @@ CGDM_TypeEnum *getEnumByName(std::string name,CGDM_Interface *interface);
 
 
 //privates
-void generateValidatorsFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
-bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interface,std::string *multiplicityIndex,std::vector <CGDM_Field>  *brotherFields);
-void generateValidatorsStructuresFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
+void generateEnumeraionFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
+void generatePrintersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
+bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interface,std::string *multiplicityIndex,std::vector <CGDM_Field>  *brotherFields);
+void generatePrintersStructuresFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
 
 /* Public Methods  ***********************************************************/
-CGVG_ValidatorsGenerator::CGVG_ValidatorsGenerator(FILE *fhHeader_p,FILE *fhSource_p,std::string preffix_p)
+CGPG_PrintersGenerator::CGPG_PrintersGenerator(FILE *fhHeader_p,FILE *fhSource_p,std::string preffix_p)
 { // Constructor
 	this->fhHeader=fhHeader_p;
 	this->fhSource=fhSource_p;
 	this->preffix=preffix_p;
 }
 
-void CGVG_ValidatorsGenerator::GenerateHeader(CGDM_Interface *interface)
+void CGPG_PrintersGenerator::GenerateHeader(CGDM_Interface *interface)
 {
 	printf("\tcopyright...\n");
 	interface->preffix=this->preffix;
 	fprintfCopyright(this->fhHeader);
 	fprintf(this->fhHeader,"\n");
-	fprintf(this->fhHeader,"#ifndef %sV_Validators_H\n",this->preffix.c_str());
-	fprintf(this->fhHeader,"#define %sV_Validators_H\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"#ifndef %sP_Printers_H\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"#define %sP_Printers_H\n",this->preffix.c_str());
 	fprintf(this->fhHeader,"\n");
 
 	fprintfLabel(this->fhHeader,"system includes");
@@ -53,12 +54,11 @@ void CGVG_ValidatorsGenerator::GenerateHeader(CGDM_Interface *interface)
 
 	fprintfLabel(this->fhHeader,"application includes");
 	fprintf(this->fhHeader,"#include <myTypes.h>\n");
-	fprintf(this->fhHeader,"#include <LIB_Crc.h>\n");
 	fprintf(this->fhHeader,"\n");
 
 	fprintfLabel(this->fhHeader,"component includes");
 	fprintf(this->fhHeader,"#include <%s_Fillers.h>\n",this->preffix.c_str());
-	fprintf(this->fhHeader,"#include <%s_ValidatorsUser.h>\n",this->preffix.c_str());
+	fprintf(this->fhHeader,"#include <%s_PrintersUser.h>\n",this->preffix.c_str());
 	fprintf(this->fhHeader,"\n");
 
 	fprintfLabel(this->fhHeader,"macros");
@@ -78,14 +78,18 @@ void CGVG_ValidatorsGenerator::GenerateHeader(CGDM_Interface *interface)
 	fprintf(this->fhHeader,"\n");
 
 	fprintfLabel(this->fhHeader,"public functions");
-	fprintf(this->fhHeader,"bool_t %sV_ValidatePacket(uint8_t *packetRaw, uint16_t totalLength, void *structuredData, uint16_t outputNb, uint16_t *packetId, uint16_t *failureId, uint8_t *failureInfo);\n",interface->preffix.c_str());
-	generateValidatorsFunctions(this->fhHeader,interface,true);
+	//enumerations
+	generateEnumeraionFunctions(this->fhHeader,interface,true);
+	//functions
+	fprintf(this->fhHeader,"//packets\n");
+	fprintf(this->fhHeader,"void ASWP_Print(uint8_t *target, uint16_t targetNb);\n");
+	generatePrintersFunctions(this->fhHeader,interface,true);
 	fprintf(this->fhHeader,"\n");
 	//end if
 	fprintf(this->fhHeader,"#endif\n");
 }
 
-void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
+void CGPG_PrintersGenerator::GenerateSource(CGDM_Interface *interface)
 {
 	printf("\tcopyright....\n");
 	interface->preffix=this->preffix;
@@ -99,18 +103,18 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"\n");
 
 	fprintfLabel(this->fhSource,"component includes");
-	fprintf(this->fhSource,"#include <%s_Validators.h>\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"#include <%s_Printers.h>\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"#include <%s_Deserializers.h>\n",this->preffix.c_str());
 	fprintf(this->fhSource,"\n");
 	fprintfLabel(this->fhSource,"local macros");
-	fprintf(this->fhSource,"#define %s_VALIDATOR_FUNCTION_NO (%ld)\n",interface->preffix.c_str(),interface->packets.size());
+	fprintf(this->fhSource,"#define %s_Printer_FUNCTION_NO (%ld)\n",interface->preffix.c_str(),interface->packets.size());
 	fprintf(this->fhSource,"\n");
 	fprintfLabel(this->fhSource,"local types");
-	fprintf(this->fhSource,"typedef struct _%sV_ValidatorFunctionLut_t_\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"typedef struct _%sP_PrinterFunctionLut_t_\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	fprintf(this->fhSource,"	uint16_t packetId;\n");
-	fprintf(this->fhSource,"	%sV_ValidatorFunction_t *validator;\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"} %sV_ValidatorFunctionLut_t;\n\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"	%sP_PrinterFunction_t *Printer;\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"} %sP_PrinterFunctionLut_t;\n\n",interface->preffix.c_str());
 	//enumerations
 	for (auto & thisEnum : interface->typeEnums)
 	{
@@ -135,11 +139,11 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintfLabel(this->fhSource,"local types");
 	fprintf(this->fhSource,"/*none*/\n\n");
 	fprintfLabel(this->fhSource,"local variables");
-	fprintf(this->fhSource,"ASWV_ValidatorFunctionLut_t ASW_ValidatorFunctionLut[ASW_VALIDATOR_FUNCTION_NO] =\n");
+	fprintf(this->fhSource,"ASWV_PrinterFunctionLut_t ASW_PrinterFunctionLut[ASW_Printer_FUNCTION_NO] =\n");
 	fprintf(this->fhSource,"{\n");
 	for (auto & thisPacket : interface->packets)
 	{
-		fprintf(this->fhSource,"	{%s_%s_PACKETID, %sVU_Validate%s}",interface->preffix.c_str(),stringToUpperString(thisPacket.name).c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
+		fprintf(this->fhSource,"	{%s_%s_PACKETID, %sPU_Validate%s}",interface->preffix.c_str(),stringToUpperString(thisPacket.name).c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
 		if (thisPacket.name!=interface->packets.at(interface->packets.size()-1).name)
 		{
 			fprintf(this->fhSource,",\n");
@@ -151,14 +155,14 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	}
 	fprintf(this->fhSource,"};\n");
 	fprintfLabel(this->fhSource,"local prototypes");
-	fprintf(this->fhSource,"%sV_ValidatorFunction_t *%s_GetValidatorFunction(uint16_t packetId);\n",interface->preffix.c_str(),interface->preffix.c_str());
-	fprintf(this->fhSource,"bool_t %sV_IsEnumerationValueValid(uint32_t *allowedValues, uint16_t allowedValuesNb, uint32_t value);\n",interface->preffix.c_str());
-	generateValidatorsStructuresFunctions(this->fhSource,interface,true);
+	fprintf(this->fhSource,"%sP_PrinterFunction_t *%s_GetPrinterFunction(uint16_t packetId);\n",interface->preffix.c_str(),interface->preffix.c_str());
+	fprintf(this->fhSource,"bool_t %sP_IsEnumerationValueValid(uint32_t *allowedValues, uint16_t allowedValuesNb, uint32_t value);\n",interface->preffix.c_str());
+	generatePrintersStructuresFunctions(this->fhSource,interface,true);
 	fprintf(this->fhSource,"\n");
 
 	fprintfLabel(this->fhSource,"public functions");
 	//validate function
-	fprintf(this->fhSource,"bool_t %sV_ValidatePacket(uint8_t *packetRaw, uint16_t totalLength, void *structuredData, uint16_t outputNb, uint16_t *packetId, uint16_t *failureId, uint8_t *failureInfo)\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"bool_t %sP_ValidatePacket(uint8_t *packetRaw, uint16_t totalLength, void *structuredData, uint16_t outputNb, uint16_t *packetId, uint16_t *failureId, uint8_t *failureInfo)\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	fprintf(this->fhSource,"	bool_t isValid = M_TRUE;\n");
 	fprintf(this->fhSource,"	CCSDS_Packet_t *packetStructured = (CCSDS_Packet_t *)packetRaw;\n");
@@ -183,7 +187,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"		if (isValid == M_FALSE)\n");
 	fprintf(this->fhSource,"		{\n");
 	fprintf(this->fhSource,"			*failureId = %s_FID_INVALID_PLENGTH;\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"			printf(\"Warning %sV_ValidatePacket bad length\\n\");\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"			printf(\"Warning %sP_ValidatePacket bad length\\n\");\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"		}\n");
 	fprintf(this->fhSource,"	}\n");
 	fprintf(this->fhSource,"	\n");
@@ -195,7 +199,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"		if (isValid == M_FALSE)\n");
 	fprintf(this->fhSource,"		{\n");
 	fprintf(this->fhSource,"			*failureId = %s_FID_ILLEGAL_PUS_VERSION;\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"			printf(\"Warning %sV_ValidatePacket not a PUS packet \\n\");\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"			printf(\"Warning %sP_ValidatePacket not a PUS packet \\n\");\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"		}\n");
 	fprintf(this->fhSource,"	}\n");
 	fprintf(this->fhSource,"	\n");
@@ -211,7 +215,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"			unexpectedValue.expectedValue = expectedCrc;\n");
 	fprintf(this->fhSource,"			unexpectedValue.foundValue = foundCrc;\n");
 	fprintf(this->fhSource,"			memcpy((uint8_t*)failureInfo, &unexpectedValue, sizeof(unexpectedValue));\n");
-	fprintf(this->fhSource,"			printf(\"Warning %sV_ValidatePacket CRC incorrect\\n\");\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"			printf(\"Warning %sP_ValidatePacket CRC incorrect\\n\");\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"		}\n");
 	fprintf(this->fhSource,"	}\n");
 	fprintf(this->fhSource,"	\n");
@@ -220,13 +224,13 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"	{\n");
 	fprintf(this->fhSource,"		//get packet ID\n");
 	fprintf(this->fhSource,"		*packetId = PUS_GetServiceSubServiceCompound(packetRaw, totalLength);\n");
-	fprintf(this->fhSource,"		//get validator function\n");
+	fprintf(this->fhSource,"		//get Printer function\n");
 	fprintf(this->fhSource,"		deserializer = %sD_GetDeserializerFunction(*packetId);\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"		if (deserializer == NULL)\n");
 	fprintf(this->fhSource,"		{\n");
 	fprintf(this->fhSource,"			isValid = M_FALSE;\n");
 	fprintf(this->fhSource,"			*failureId = %s_FID_ILLEGAL_P_TYPE;\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"			printf(\"Warning %sV_ValidatePacket service and/or subservice unknown \\n\");\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"			printf(\"Warning %sP_ValidatePacket service and/or subservice unknown \\n\");\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"		}\n");
 	fprintf(this->fhSource,"	}\n");
 	fprintf(this->fhSource,"	\n");
@@ -251,7 +255,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"			*failureId = %s_FID_LENGTH_DISCREP;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"				%s_UnexpectedValueUint16_t unexpectedValue;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"				memcpy((uint8_t*)failureInfo, &unexpectedValue, sizeof(unexpectedValue));\n");
-	fprintf(this->fhSource,"				printf(\"Warning %sV_ValidatePacket inconsistent size found: %%d expected: %%d \\n\", unexpectedValue.foundValue, unexpectedValue.expectedValue);\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"				printf(\"Warning %sP_ValidatePacket inconsistent size found: %%d expected: %%d \\n\", unexpectedValue.foundValue, unexpectedValue.expectedValue);\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"			}\n");
 	fprintf(this->fhSource,"		}\n");
 	fprintf(this->fhSource,"		else\n");
@@ -262,11 +266,11 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"	//if specific packet type size is correct and parameters validated 2\n");
 	fprintf(this->fhSource,"	if (isValid)\n");
 	fprintf(this->fhSource,"	{\n");
-	fprintf(this->fhSource,"		//get validator and validate\n");
-	fprintf(this->fhSource,"		%sV_ValidatorFunction_t *validatorFunction = %s_GetValidatorFunction(*packetId);\n",interface->preffix.c_str(),interface->preffix.c_str());
-	fprintf(this->fhSource,"		if (validatorFunction != NULL)\n");
+	fprintf(this->fhSource,"		//get Printer and validate\n");
+	fprintf(this->fhSource,"		%sP_PrinterFunction_t *PrinterFunction = %s_GetPrinterFunction(*packetId);\n",interface->preffix.c_str(),interface->preffix.c_str());
+	fprintf(this->fhSource,"		if (PrinterFunction != NULL)\n");
 	fprintf(this->fhSource,"		{\n");
-	fprintf(this->fhSource,"			isValid = validatorFunction(structuredData, failureId, failureInfo, &parameterCounter);\n");
+	fprintf(this->fhSource,"			isValid = PrinterFunction(structuredData, failureId, failureInfo, &parameterCounter);\n");
 	fprintf(this->fhSource,"			if (isValid==M_FALSE)\n");
 	fprintf(this->fhSource,"			{\n");
 	fprintf(this->fhSource,"				printf(\"Validation error\\n\");\n");
@@ -276,7 +280,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"		{\n");
 	fprintf(this->fhSource,"			*failureId = %s_FID_ILLEGAL_P_TYPE;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"			isValid = M_FALSE;\n");
-	fprintf(this->fhSource,"			printf(\"Warning %sV_ValidatePacket Illegal Packet Type \\n\");\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"			printf(\"Warning %sP_ValidatePacket Illegal Packet Type \\n\");\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"		}\n");
 	fprintf(this->fhSource,"	}\n");
 	fprintf(this->fhSource,"	\n");
@@ -285,29 +289,29 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 
 
 	//packets
-	generateValidatorsFunctions(this->fhSource,interface,false);
+	generatePrintersFunctions(this->fhSource,interface,false);
 
 	fprintfLabel(this->fhSource,"local functions");
 
-	//ASWV_ValidatorFunction_t *ASW_GetValidatorFunction(uint16_t packetId)
-	fprintf(this->fhSource,"%sV_ValidatorFunction_t *ASW_GetValidatorFunction(uint16_t packetId)\n",interface->preffix.c_str());
+	//ASWV_PrinterFunction_t *ASW_GetPrinterFunction(uint16_t packetId)
+	fprintf(this->fhSource,"%sP_PrinterFunction_t *ASW_GetPrinterFunction(uint16_t packetId)\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
-	fprintf(this->fhSource,"	%sV_ValidatorFunction_t *validator = NULL;\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"	%sP_PrinterFunction_t *Printer = NULL;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"	\n");
-	fprintf(this->fhSource,"	for (uint16_t fIx = 0; fIx < %s_VALIDATOR_FUNCTION_NO; fIx++)\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"	for (uint16_t fIx = 0; fIx < %s_Printer_FUNCTION_NO; fIx++)\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"	{\n");
-	fprintf(this->fhSource,"		if (packetId == %s_ValidatorFunctionLut[fIx].packetId)\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"		if (packetId == %s_PrinterFunctionLut[fIx].packetId)\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"		{\n");
-	fprintf(this->fhSource,"			validator = %s_ValidatorFunctionLut[fIx].validator;\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"			Printer = %s_PrinterFunctionLut[fIx].Printer;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"			break;\n");
 	fprintf(this->fhSource,"		}\n");
 	fprintf(this->fhSource,"	}\n");
 	fprintf(this->fhSource,"	\n");
-	fprintf(this->fhSource,"	return validator;\n");
+	fprintf(this->fhSource,"	return Printer;\n");
 	fprintf(this->fhSource,"}\n\n");
 
 	//bool_t ASWV_IsEnumerationValueValid(uint32_t *allowedValues, uint16_t allowedValuesNb, uint32_t value)
-	fprintf(this->fhSource,"bool_t %sV_IsEnumerationValueValid(uint32_t *allowedValues, uint16_t allowedValuesNb, uint32_t value)\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"bool_t %sP_IsEnumerationValueValid(uint32_t *allowedValues, uint16_t allowedValuesNb, uint32_t value)\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	fprintf(this->fhSource,"	bool_t isFound = M_FALSE;\n");
 	fprintf(this->fhSource,"	\n");
@@ -322,7 +326,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"	return (isFound == M_TRUE);\n");
 	fprintf(this->fhSource,"}\n\n");
 	//structures
-	generateValidatorsStructuresFunctions(this->fhSource,interface,false);
+	generatePrintersStructuresFunctions(this->fhSource,interface,false);
 
 }
 /* Public Functions ******************************************************/
@@ -335,7 +339,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 /* Private Functions ******************************************************/
 /* none */
 
-bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interface,std::string *multiplicityIndex,std::vector <CGDM_Field>  *brotherFields)
+bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interface,std::string *multiplicityIndex,std::vector <CGDM_Field>  *brotherFields)
 {
 	bool toValidate=false;
 
@@ -351,7 +355,7 @@ bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *inter
 		*multiplicityIndex+="[";
 		*multiplicityIndex+=thisField->name;
 		*multiplicityIndex+="Ix]";
-		generateFieldValidator(fh,&thisField2,interface,multiplicityIndex,brotherFields);
+		generateFieldPrinter(fh,&thisField2,interface,multiplicityIndex,brotherFields);
 		fprintf(fh,"  }\n");
 	}
 	//variable
@@ -370,7 +374,7 @@ bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *inter
 				{
 					fprintf(fh,"    	if (structuredData->%s == %s_%s)\n",thisField->typeFromField.c_str(),interface->preffix.c_str(),thisElement.label.c_str());
 					fprintf(fh,"    	{\n");
-					fprintf(fh,"      		isValid=%sV_%s((%s_%s_t*)&structuredData->%s, failureId, failureInfo, parameterCounter);\n",
+					fprintf(fh,"      		isValid=%sP_%s((%s_%s_t*)&structuredData->%s, failureId, failureInfo, parameterCounter);\n",
 							interface->preffix.c_str(),thisElement.relatedType.c_str(),interface->preffix.c_str(),thisElement.relatedType.c_str(),thisField->name.c_str());
 					fprintf(fh,"    	}\n");
 				}
@@ -384,7 +388,7 @@ bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *inter
 	{
 		fprintf(fh,"	if (isValid == M_TRUE)\n");
 		fprintf(fh,"	{\n");
-		fprintf(fh,"		isValid = %sVU_Validate%s(&structuredData->%s, failureId, failureInfo, parameterCounter);\n",interface->preffix.c_str(),thisField->type.c_str(), thisField->name.c_str());
+		fprintf(fh,"		isValid = %sPU_Validate%s(&structuredData->%s, failureId, failureInfo, parameterCounter);\n",interface->preffix.c_str(),thisField->type.c_str(), thisField->name.c_str());
 		fprintf(fh,"	}\n");
 		toValidate=true;
 	}
@@ -393,23 +397,9 @@ bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *inter
 	{
 		if (thisField->isEnum)
 		{
-			std::string enumAbbreviation="UNK";
-			//find the enumeration
-			for (auto & thisEnum : interface->typeEnums)
-			{
-				if (thisEnum.name==thisField->type)
-				{
-					std::string firstElemName=thisEnum.elements.at(0).label;
-					enumAbbreviation=firstElemName.substr(0,firstElemName.find('_'));
-					break;
-				}
-			}
-
-
-
 			fprintf(fh,"	if (isValid == M_TRUE)\n");
 			fprintf(fh,"	{\n");
-			fprintf(fh,"		isValid = %sV_IsEnumerationValueValid(%s_%s_AllowedValues, ASW_%s_NB, structuredData->%s);\n",interface->preffix.c_str(),interface->preffix.c_str(),thisField->type.c_str(),enumAbbreviation.c_str(),thisField->name.c_str());
+			fprintf(fh,"		isValid = %sP_IsEnumerationValueValid(%s_%s_AllowedValues, ASW_PAID_NB, structuredData->%s);\n",interface->preffix.c_str(),interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
 			fprintf(fh,"		*parameterCounter += 1;\n");
 			fprintf(fh,"	}\n");
 			toValidate=true;
@@ -449,20 +439,39 @@ bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *inter
 	return toValidate;
 }
 
-void generateValidatorsFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
+void generateEnumeraionFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
 {
+	fprintf(fh,"//enumeration\n");
+	for (auto & thisEnumeration : interface->typeEnums)
+	{
+		if (isJustPrototype)
+		{
+			fprintf(fh,"void %sP_Print%s(uint8_t *target, %s_%s_t enumeration)",interface->preffix.c_str(),thisEnumeration.name.c_str(),interface->preffix.c_str(),thisEnumeration.name.c_str());
+			fprintf(fh,";\n");
+		}
+		else
+		{
+			//TODO
+		}
+	}
+
+}
+
+void generatePrintersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
+{
+
 	for (auto & thisPacket : interface->packets)
 	{
 
 
 		if (isJustPrototype)
 		{
-			fprintf(fh,"%sV_ValidatorFunction_t %sVU_Validate%s",interface->preffix.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
+			fprintf(fh,"void %sP_Print%s(%s_%s_t *structureData)",interface->preffix.c_str(),thisPacket.name.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
 			fprintf(fh,";\n");
 		}
 		else
 		{
-			fprintf(fh,"bool_t %sVU_Validate%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisPacket.name.c_str());
+			fprintf(fh,"bool_t %sPU_Validate%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisPacket.name.c_str());
 			fprintf(fh,"{\n");
 			fprintf(fh,"	bool_t isValid = M_TRUE;\n");
 			fprintf(fh,"	*failureId = ASW_FID_OK;\n");
@@ -472,7 +481,7 @@ void generateValidatorsFunctions(FILE *fh,CGDM_Interface *interface,bool isJustP
 			for (auto & thisField : thisPacket.fields)
 			{
 				std::string multiplicityIndex="";
-				toValidate|=generateFieldValidator(fh,&thisField,interface,&multiplicityIndex,&thisPacket.fields);
+				toValidate|=generateFieldPrinter(fh,&thisField,interface,&multiplicityIndex,&thisPacket.fields);
 			}
 			if (toValidate==false)
 			{
@@ -484,19 +493,19 @@ void generateValidatorsFunctions(FILE *fh,CGDM_Interface *interface,bool isJustP
 	}
 }
 
-void generateValidatorsStructuresFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
+void generatePrintersStructuresFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
 {
 	for (auto & thisStructure : interface->typeStructures)
 	{
 
 		if (isJustPrototype)
 		{
-			fprintf(fh,"%sV_ValidatorFunction_t %sV_%s",interface->preffix.c_str(),interface->preffix.c_str(),thisStructure.name.c_str());
+			fprintf(fh,"%sP_PrinterFunction_t %sP_%s",interface->preffix.c_str(),interface->preffix.c_str(),thisStructure.name.c_str());
 			fprintf(fh,";\n");
 		}
 		else
 		{
-			fprintf(fh,"bool_t %sV_%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisStructure.name.c_str());
+			fprintf(fh,"bool_t %sP_%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisStructure.name.c_str());
 			fprintf(fh,"\n{\n");
 			fprintf(fh,"	bool_t isValid = M_TRUE;\n");
 			fprintf(fh,"	*failureId = ASW_FID_OK;\n");
@@ -506,7 +515,7 @@ void generateValidatorsStructuresFunctions(FILE *fh,CGDM_Interface *interface,bo
 			for (auto & thisField : thisStructure.fields)
 			{
 				std::string multiplicityIndex="";
-				toValidate|=generateFieldValidator(fh,&thisField,interface,&multiplicityIndex,&thisStructure.fields);
+				toValidate|=generateFieldPrinter(fh,&thisField,interface,&multiplicityIndex,&thisStructure.fields);
 			}
 			if (toValidate==false)
 			{

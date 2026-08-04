@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sgi:interface xmlns:sgi="http://www.example.org/interface"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/interface interface.xsd ">
+	<sgi:description>Interface of the Boot SW</sgi:description>
+	<sgi:types>
+		<!-- Enumerations xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+		<!-- General -->
+		<sgi:enum name="EnumPktType" baseType="uint8">
+			<sgi:enumElement label="PKT_TELEMETRY" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="PKT_TELECOMMAND" value="1" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumBoolean" baseType="uint8">
+			<sgi:enumElement label="BOL_FALSE" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BOL_TRUE" value="1" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumApid" baseType="uint16">
+			<sgi:enumElement label="APID_BOOTSW" value="34" type="null"></sgi:enumElement>
+			<sgi:enumElement label="APID_OBC" value="100" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumBootDevice" baseType="uint8">
+			<sgi:enumElement label="BD_MSSW25_NOM" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BD_FPGAW25_NOM" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BD_MSSW25_RED" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BD_FPGAW25_RED" value="3" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<sgi:enum name="EnumBootStatus" baseType="uint8">
+			<sgi:enumElement label="BS_BOOTLOADER1_STARTED" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BS_DDR_TRAINING_STARTED" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BS_DDR_TRAINING_FAILED_REBOOT" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BS_BOOTLOADER2_STARTED" value="3" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BS_BOOTLOADER2_FAILED_REBOOT" value="4" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BS_LINUX_BOOT_STARTED" value="5" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BS_LINUX_BOOT_FAILED_REBOOT" value="6" type="null"></sgi:enumElement>
+			<sgi:enumElement label="BS_LINUX_BOOT_SUCEEDED" value="7" type="null"></sgi:enumElement>
+		</sgi:enum>
+		<!-- Service 3 -->
+		<sgi:enum name="EnumHkReportId" baseType="uint16">
+			<sgi:enumElement label="HKID_ALL" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="HKID_BOOT_HK" value="1" type="HkBootSw"></sgi:enumElement>
+		</sgi:enum>
+		<!-- Types xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+		<sgi:structureField name="HkBootSw">
+			<sgi:field name="bootDevice" type="EnumBootDevice"></sgi:field>
+			<sgi:field name="bootStatus" type="EnumBootStatus"></sgi:field>
+		</sgi:structureField>
+	</sgi:types>
+	<sgi:packets>
+		<!-- Service 3 -->
+		<!-- TM(3,25) -->
+		<sgi:packet isCommand="false" name="HkReport" id="0x0319">
+			<sgi:description>Informative Event</sgi:description>
+			<sgi:structureField name="ccsdsPrimaryHeader" type="CCSDS_PrimaryHeader" isUserCode="true" />
+			<sgi:structureField name="pusTmSecondaryHeader" type="PUS_TmSecondaryHeader" isUserCode="true"></sgi:structureField>
+			<sgi:field name="structureId" type="EnumHkReportId"></sgi:field>
+			<sgi:structureField name="hkData" type="variable" typeFromField="structureId"></sgi:structureField>
+		</sgi:packet>
+		
+
+	</sgi:packets>
+</sgi:interface>

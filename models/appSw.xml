@@ -40,6 +40,7 @@
 			<sgi:enumElement label="HKID_ALL" value="0" type="null"></sgi:enumElement>
 			<sgi:enumElement label="HKID_HEART_BEAT" value="1" type="HkHeartBeat"></sgi:enumElement>
 			<sgi:enumElement label="HKID_CAM_STATUS" value="2" type="HkCamStatus"></sgi:enumElement>
+			<sgi:enumElement label="HKID_BOARD_STATUS" value="3" type="HkBoardStatus"></sgi:enumElement>
 		</sgi:enum>
 		<!-- Service 5 -->
 		<sgi:enum name="EnumEventId" baseType="uint16">
@@ -53,6 +54,7 @@
 			<sgi:enumElement label="EID_SAVE_IMAGE" value="7" type="null"></sgi:enumElement>
 			<sgi:enumElement label="EID_SAVE_IMAGE_FAILED" value="8" type="null"></sgi:enumElement>
 			<sgi:enumElement label="EID_FPGA_ALGOS_FAILED" value="9" type="null"></sgi:enumElement>
+			<sgi:enumElement label="EID_REGISTER_CHANGE" value="10" type="UnexpectedRegisterValue"></sgi:enumElement>
 		</sgi:enum>
 		<sgi:enum name="EnumRebootReason" baseType="uint8">
 			<sgi:enumElement label="RS_UNKNOWN" value="0" type="null"></sgi:enumElement>
@@ -123,6 +125,31 @@
 			<sgi:enumElement label="PAID_LANDING_PICTURES_NO_NA" value="18" type="null"></sgi:enumElement>
 			<sgi:enumElement label="PAID_LANDING_PICTURES_NO_WA" value="19" type="null"></sgi:enumElement>
 		</sgi:enum>
+		<sgi:enum name="EnumRegisterId" baseType="uint16">
+			<sgi:enumElement label="RID_SPW1_RXDESCR_START_ADDR" value="0" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_RXDESCR_START_ADDR" value="1" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW1_RXDESCR_END_OFFSET" value="2" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_RXDESCR_END_OFFSET" value="3" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW1_RXDATA_START_ADDR" value="4" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_RXDATA_START_ADDR" value="5" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW1_RXDATA_END_OFFSET" value="6" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_RXDATA_END_OFFSET" value="7" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW1_RXROLLOVER_REG" value="8" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_RXROLLOVER_REG" value="9" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW1_TXDESCR_START_ADDRESS" value="10" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_TXDESCR_START_ADDRESS" value="11" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW1_TXDESCR_END_OFFSET" value="12" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_TXDESCR_END_OFFSET" value="13" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW1_DATA_TX_DATA_START" value="14" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_SPW2_DATA_TX_DATA_START" value="15" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_FPGA_PARAM_RD_ADDR" value="16" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_FPGA_PARAM_THRESH_TEN" value="17" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_FPGA_PARAM_THRESH_EDG" value="18" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_CAMD_PARAM_THRESH_BLK" value="19" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_CAMD_PARAM_THRESH_WHT" value="20" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_FPGA_APB_INIT" value="21" type="null"></sgi:enumElement>
+			<sgi:enumElement label="RID_FPGA_APB_CANARY" value="22" type="null"></sgi:enumElement>
+		</sgi:enum>
 		
 		<!-- Types xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 		<!-- Service 1 -->
@@ -156,22 +183,47 @@
 			<sgi:field name="bufferedNo" type="uint8"></sgi:field>
 			<sgi:field name="storedNo" type="uint16"></sgi:field>
 			<sgi:field name="downloadedNo" type="uint16"></sgi:field>
-				<sgi:field name="wacTm1_1No" type="uint16"></sgi:field>
-				<sgi:field name="wacTm1_2No" type="uint16"></sgi:field>
-				<sgi:field name="wacTm1_7No" type="uint16"></sgi:field>
-				<sgi:field name="wacTm1_8No" type="uint16"></sgi:field>
-				<sgi:field name="wacTm3_25No" type="uint16"></sgi:field>
-				<sgi:field name="wacSentCommandsNo" type="uint16"></sgi:field>
-				<sgi:field name="wacReceivedImagesNo" type="uint16"></sgi:field>
-				<sgi:field name="wacTemperature" type="float32"></sgi:field>
-				<sgi:field name="nacTm1_1No" type="uint16"></sgi:field>
-				<sgi:field name="nacTm1_2No" type="uint16"></sgi:field>
-				<sgi:field name="nacTm1_7No" type="uint16"></sgi:field>
-				<sgi:field name="nacTm1_8No" type="uint16"></sgi:field>
-				<sgi:field name="nacTm3_25No" type="uint16"></sgi:field>
-				<sgi:field name="nacSentCommandsNo" type="uint16"></sgi:field>
-				<sgi:field name="nacReceivedImagesNo" type="uint16"></sgi:field>
-				<sgi:field name="nacTemperature" type="float32"></sgi:field>
+			<sgi:field name="wacTm1_1No" type="uint16"></sgi:field>
+			<sgi:field name="wacTm1_2No" type="uint16"></sgi:field>
+			<sgi:field name="wacTm1_7No" type="uint16"></sgi:field>
+			<sgi:field name="wacTm1_8No" type="uint16"></sgi:field>
+			<sgi:field name="wacTm3_25No" type="uint16"></sgi:field>
+			<sgi:field name="wacSentCommandsNo" type="uint16"></sgi:field>
+			<sgi:field name="wacReceivedImagesNo" type="uint16"></sgi:field>
+			<sgi:field name="wacTemperature" type="float32"></sgi:field>
+			<sgi:field name="nacTm1_1No" type="uint16"></sgi:field>
+			<sgi:field name="nacTm1_2No" type="uint16"></sgi:field>
+			<sgi:field name="nacTm1_7No" type="uint16"></sgi:field>
+			<sgi:field name="nacTm1_8No" type="uint16"></sgi:field>
+			<sgi:field name="nacTm3_25No" type="uint16"></sgi:field>
+			<sgi:field name="nacSentCommandsNo" type="uint16"></sgi:field>
+			<sgi:field name="nacReceivedImagesNo" type="uint16"></sgi:field>
+			<sgi:field name="nacTemperature" type="float32"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="HkBoardStatus">
+			<sgi:field name="socTempC" type="float32"></sgi:field>
+			<sgi:field name="inputVoltageV" type="float32"></sgi:field>
+			<sgi:field name="rail1_0V" type="float32"></sgi:field>
+			<sgi:field name="rail1_0PfV" type="float32"></sgi:field>
+			<sgi:field name="rail1_2V" type="float32"></sgi:field>
+			<sgi:field name="rail1_8V" type="float32"></sgi:field>
+			<sgi:field name="rail1_8PfV" type="float32"></sgi:field>
+			<sgi:field name="rail2_5V" type="float32"></sgi:field>
+			<sgi:field name="rail2_5VPf" type="float32"></sgi:field>
+			<sgi:field name="rail3_3V" type="float32"></sgi:field>
+			<sgi:field name="systemDdrV" type="float32"></sgi:field>
+			<sgi:field name="FabricDdrV" type="float32"></sgi:field>
+			<sgi:field name="adc1V" type="float32"></sgi:field>
+			<sgi:field name="adc2V" type="float32"></sgi:field>
+			<sgi:field name="cam1ThermistorOhm" type="float32"></sgi:field>
+			<sgi:field name="cam2ThermistorOhm" type="float32"></sgi:field>
+			<sgi:field name="cam1V" type="float32"></sgi:field>
+			<sgi:field name="cam2V" type="float32"></sgi:field>
+			<sgi:field name="camsTelemV" type="float32"></sgi:field>
+			<sgi:field name="adcTel" type="float32"></sgi:field>
+			<sgi:field name="sig1TempHighReached" type="uint8"></sgi:field>
+			<sgi:field name="sig2TempLowReached" type="uint8"></sgi:field>
+			<sgi:field name="sig3Clock" type="uint8"></sgi:field>
 		</sgi:structureField>
 		<!-- Service 5 -->
 		<sgi:structureField name="DeathReport">
@@ -213,6 +265,11 @@
 			<sgi:field name="startTimeBetweenPictures" type="uint32"></sgi:field>
 			<sgi:field name="endTimeBetweenPictures" type="uint32"></sgi:field>
 			<sgi:field name="duration" type="uint32"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="UnexpectedRegisterValue">
+			<sgi:field name="registerId" type="EnumRegisterId"></sgi:field>
+			<sgi:field name="expectedValue" type="uint32"></sgi:field>
+			<sgi:field name="foundValue" type="uint32"></sgi:field>
 		</sgi:structureField>
 	</sgi:types>
 	<sgi:packets>
@@ -464,6 +521,7 @@ of its ACK settings.</sgi:description>
 			<sgi:field name="thresholdL" type="uint16"></sgi:field>
 			<sgi:field name="thresholdH" type="uint16"></sgi:field>
 			<sgi:field name="offset" type="uint16"></sgi:field>
+			<sgi:field name="adcGain" type="uint8"></sgi:field>
 			<sgi:field name="isPgaGainDoubled" type="EnumBoolean"></sgi:field>
 			<sgi:field name="pgaGain" type="EnumPgaGain"></sgi:field>
 			<sgi:field name="voltageRamp" type="uint8"></sgi:field>
