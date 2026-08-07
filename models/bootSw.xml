@@ -37,7 +37,7 @@
 		<!-- Service 3 -->
 		<sgi:enum name="EnumHkReportId" baseType="uint16">
 			<sgi:enumElement label="HKID_ALL" value="0" type="null"></sgi:enumElement>
-			<sgi:enumElement label="HKID_BOOT_HK" value="1" type="HkBootSw"></sgi:enumElement>
+			<sgi:enumElement label="HKID_BOOT_HK" value="255" type="HkBootSw"></sgi:enumElement>
 		</sgi:enum>
 		<!-- Types xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 		<sgi:structureField name="HkBootSw">

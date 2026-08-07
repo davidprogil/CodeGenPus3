@@ -81,6 +81,8 @@
 			<sgi:enumElement label="FUN_MODE_FLYBY" value="14" type="null"></sgi:enumElement>
 			<sgi:enumElement label="FUN_MODE_ALIVENESS" value="15" type="null"></sgi:enumElement>
 			<sgi:enumElement label="FUN_MODE_LANDING" value="16" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_START_PICTURE_SELECTION_WAC" value="17" type="PictureSequence"></sgi:enumElement>
+			<sgi:enumElement label="FUN_START_PICTURE_SELECTION_NAC" value="18" type="PictureSequence"></sgi:enumElement>
 		</sgi:enum>
 		<sgi:enum name="EnumCameraId" baseType="uint8">
 			<sgi:enumElement label="CAM_WAC" value="0" type="null"></sgi:enumElement>
