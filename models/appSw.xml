@@ -39,8 +39,6 @@
 		<sgi:enum name="EnumHkReportId" baseType="uint16">
 			<sgi:enumElement label="HKID_ALL" value="0" type="null"></sgi:enumElement>
 			<sgi:enumElement label="HKID_HEART_BEAT" value="1" type="HkHeartBeat"></sgi:enumElement>
-			<sgi:enumElement label="HKID_CAM_STATUS" value="2" type="HkCamStatus"></sgi:enumElement>
-			<sgi:enumElement label="HKID_BOARD_STATUS" value="3" type="HkBoardStatus"></sgi:enumElement>
 		</sgi:enum>
 		<!-- Service 5 -->
 		<sgi:enum name="EnumEventId" baseType="uint16">
@@ -55,6 +53,7 @@
 			<sgi:enumElement label="EID_SAVE_IMAGE_FAILED" value="8" type="null"></sgi:enumElement>
 			<sgi:enumElement label="EID_FPGA_ALGOS_FAILED" value="9" type="null"></sgi:enumElement>
 			<sgi:enumElement label="EID_REGISTER_CHANGE" value="10" type="UnexpectedRegisterValue"></sgi:enumElement>
+			<sgi:enumElement label="EID_CAMERA_FAIL" value="11" type="CameraId"></sgi:enumElement>
 		</sgi:enum>
 		<sgi:enum name="EnumRebootReason" baseType="uint8">
 			<sgi:enumElement label="RS_UNKNOWN" value="0" type="null"></sgi:enumElement>
@@ -83,6 +82,8 @@
 			<sgi:enumElement label="FUN_MODE_LANDING" value="16" type="null"></sgi:enumElement>
 			<sgi:enumElement label="FUN_START_PICTURE_SELECTION_WAC" value="17" type="PictureSequence"></sgi:enumElement>
 			<sgi:enumElement label="FUN_START_PICTURE_SELECTION_NAC" value="18" type="PictureSequence"></sgi:enumElement>
+			<sgi:enumElement label="FUN_POWER_CYCLE_WAC" value="19" type="PictureSequence"></sgi:enumElement>
+			<sgi:enumElement label="FUN_POWER_CYCLE_NAC" value="20" type="PictureSequence"></sgi:enumElement>
 		</sgi:enum>
 		<sgi:enum name="EnumCameraId" baseType="uint8">
 			<sgi:enumElement label="CAM_WAC" value="0" type="null"></sgi:enumElement>
@@ -180,8 +181,6 @@
 			<sgi:field name="cpuLoad" type="float32"></sgi:field>
 			<sgi:field name="apbInit" type="uint32"></sgi:field>	
 			<sgi:field name="apbCanaryRam" type="uint32"></sgi:field>
-		</sgi:structureField>
-		<sgi:structureField name="HkCamStatus">
 			<sgi:field name="bufferedNo" type="uint8"></sgi:field>
 			<sgi:field name="storedNo" type="uint16"></sgi:field>
 			<sgi:field name="downloadedNo" type="uint16"></sgi:field>
@@ -201,8 +200,6 @@
 			<sgi:field name="nacSentCommandsNo" type="uint16"></sgi:field>
 			<sgi:field name="nacReceivedImagesNo" type="uint16"></sgi:field>
 			<sgi:field name="nacTemperature" type="float32"></sgi:field>
-		</sgi:structureField>
-		<sgi:structureField name="HkBoardStatus">
 			<sgi:field name="socTempC" type="float32"></sgi:field>
 			<sgi:field name="inputVoltageV" type="float32"></sgi:field>
 			<sgi:field name="rail1_0V" type="float32"></sgi:field>
@@ -237,6 +234,9 @@
 		</sgi:structureField>
 		<sgi:structureField name="Mode">
 			<sgi:field name="mode" type="EnumMode"></sgi:field>
+		</sgi:structureField>
+		<sgi:structureField name="CameraId">
+			<sgi:field name="cameraId" type="EnumCameraId"></sgi:field>
 		</sgi:structureField>
 		<!-- Service 8 -->
 		<sgi:structureField name="ApidStructure">
