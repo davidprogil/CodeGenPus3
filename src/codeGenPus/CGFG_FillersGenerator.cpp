@@ -308,7 +308,7 @@ void WriteSizersSignature(FILE *fh,CGDM_Interface *interface,bool isPrototype)
 }
 void WriteFunctionSignature(FILE *fh,CGDM_Packet *packet,CGDM_Interface *interface)
 {
-	fprintf(fh,"void %sF_Fill%s(ASW_%s_t *target",interface->preffix.c_str(),packet->name.c_str(),packet->name.c_str());
+	fprintf(fh,"void %sF_Fill%s(%s_%s_t *target",interface->preffix.c_str(),packet->name.c_str(),interface->preffix.c_str(),packet->name.c_str());
 	for (auto & thisField : packet->fields)
 	{
 		//type

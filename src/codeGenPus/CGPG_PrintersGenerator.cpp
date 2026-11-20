@@ -82,7 +82,7 @@ void CGPG_PrintersGenerator::GenerateHeader(CGDM_Interface *interface)
 	generateEnumeraionFunctions(this->fhHeader,interface,true);
 	//functions
 	fprintf(this->fhHeader,"//packets\n");
-	fprintf(this->fhHeader,"void ASWP_Print(uint8_t *target, uint16_t targetNb);\n");
+	fprintf(this->fhHeader,"void %sP_Print(uint8_t *target, uint16_t targetNb);\n",this->preffix.c_str());
 	generatePrintersFunctions(this->fhHeader,interface,true);
 	fprintf(this->fhHeader,"\n");
 	//end if
@@ -139,7 +139,7 @@ void CGPG_PrintersGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintfLabel(this->fhSource,"local types");
 	fprintf(this->fhSource,"/*none*/\n\n");
 	fprintfLabel(this->fhSource,"local variables");
-	fprintf(this->fhSource,"ASWV_PrinterFunctionLut_t ASW_PrinterFunctionLut[ASW_Printer_FUNCTION_NO] =\n");
+	fprintf(this->fhSource,"%sV_PrinterFunctionLut_t %s_PrinterFunctionLut[%s_Printer_FUNCTION_NO] =\n",this->preffix.c_str(),this->preffix.c_str(),this->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	for (auto & thisPacket : interface->packets)
 	{
@@ -211,7 +211,7 @@ void CGPG_PrintersGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"		if (isValid == M_FALSE)\n");
 	fprintf(this->fhSource,"		{\n");
 	fprintf(this->fhSource,"			*failureId = %s_FID_CS_DISCREP;\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"			ASW_UnexpectedValueUint16_t unexpectedValue;\n");
+	fprintf(this->fhSource,"			%S_UnexpectedValueUint16_t unexpectedValue;\n",this->preffix.c_str());
 	fprintf(this->fhSource,"			unexpectedValue.expectedValue = expectedCrc;\n");
 	fprintf(this->fhSource,"			unexpectedValue.foundValue = foundCrc;\n");
 	fprintf(this->fhSource,"			memcpy((uint8_t*)failureInfo, &unexpectedValue, sizeof(unexpectedValue));\n");
@@ -294,7 +294,7 @@ void CGPG_PrintersGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintfLabel(this->fhSource,"local functions");
 
 	//ASWV_PrinterFunction_t *ASW_GetPrinterFunction(uint16_t packetId)
-	fprintf(this->fhSource,"%sP_PrinterFunction_t *ASW_GetPrinterFunction(uint16_t packetId)\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"%sP_PrinterFunction_t *%s_GetPrinterFunction(uint16_t packetId)\n",interface->preffix.c_str(),this->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	fprintf(this->fhSource,"	%sP_PrinterFunction_t *Printer = NULL;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"	\n");
@@ -399,7 +399,7 @@ bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interfa
 		{
 			fprintf(fh,"	if (isValid == M_TRUE)\n");
 			fprintf(fh,"	{\n");
-			fprintf(fh,"		isValid = %sP_IsEnumerationValueValid(%s_%s_AllowedValues, ASW_PAID_NB, structuredData->%s);\n",interface->preffix.c_str(),interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
+			fprintf(fh,"		isValid = %sP_IsEnumerationValueValid(%s_%s_AllowedValues, %s_PAID_NB, structuredData->%s);\n",interface->preffix.c_str(),interface->preffix.c_str(),thisField->type.c_str(),interface->preffix.c_str(),thisField->name.c_str());
 			fprintf(fh,"		*parameterCounter += 1;\n");
 			fprintf(fh,"	}\n");
 			toValidate=true;
@@ -417,7 +417,7 @@ bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interfa
 				if (thisField->restrictionMinInclusive!="") fprintf(fh,"		if (structuredData->%s <= %s)\n",thisField->name.c_str(),thisField->restrictionMinInclusive.c_str());
 				fprintf(fh,"		{\n");
 				fprintf(fh,"			isValid = M_FALSE;\n");
-				fprintf(fh,"			*failureId = ASW_FID_INVALID_PARAMETER_VALUE;\n");
+				fprintf(fh,"			*failureId = %s_FID_INVALID_PARAMETER_VALUE;\n",interface->preffix.c_str());
 				fprintf(fh,"		}\n");
 				fprintf(fh,"		*parameterCounter += 1;\n");
 				fprintf(fh,"	}\n");
@@ -474,7 +474,7 @@ void generatePrintersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPro
 			fprintf(fh,"bool_t %sPU_Validate%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisPacket.name.c_str());
 			fprintf(fh,"{\n");
 			fprintf(fh,"	bool_t isValid = M_TRUE;\n");
-			fprintf(fh,"	*failureId = ASW_FID_OK;\n");
+			fprintf(fh,"	*failureId = %s_FID_OK;\n",interface->preffix.c_str());
 			fprintf(fh,"\n");
 			fprintf(fh,"	%s_%s_t *structuredData = (%s_%s_t *)input;\n\n",interface->preffix.c_str(),thisPacket.name.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
 			bool toValidate=false;
@@ -508,7 +508,7 @@ void generatePrintersStructuresFunctions(FILE *fh,CGDM_Interface *interface,bool
 			fprintf(fh,"bool_t %sP_%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisStructure.name.c_str());
 			fprintf(fh,"\n{\n");
 			fprintf(fh,"	bool_t isValid = M_TRUE;\n");
-			fprintf(fh,"	*failureId = ASW_FID_OK;\n");
+			fprintf(fh,"	*failureId = %s_FID_OK;\n",interface->preffix.c_str());
 			fprintf(fh,"\n");
 			fprintf(fh,"	%s_%s_t *structuredData = (%s_%s_t *)input;\n\n",interface->preffix.c_str(),thisStructure.name.c_str(),interface->preffix.c_str(),thisStructure.name.c_str());
 			bool toValidate=false;

@@ -135,7 +135,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintfLabel(this->fhSource,"local types");
 	fprintf(this->fhSource,"/*none*/\n\n");
 	fprintfLabel(this->fhSource,"local variables");
-	fprintf(this->fhSource,"ASWV_ValidatorFunctionLut_t ASW_ValidatorFunctionLut[ASW_VALIDATOR_FUNCTION_NO] =\n");
+	fprintf(this->fhSource,"%sV_ValidatorFunctionLut_t %s_ValidatorFunctionLut[%s_VALIDATOR_FUNCTION_NO] =\n",this->preffix.c_str(),this->preffix.c_str(),this->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	for (auto & thisPacket : interface->packets)
 	{
@@ -207,7 +207,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintf(this->fhSource,"		if (isValid == M_FALSE)\n");
 	fprintf(this->fhSource,"		{\n");
 	fprintf(this->fhSource,"			*failureId = %s_FID_CS_DISCREP;\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"			ASW_UnexpectedValueUint16_t unexpectedValue;\n");
+	fprintf(this->fhSource,"			%s_UnexpectedValueUint16_t unexpectedValue;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"			unexpectedValue.expectedValue = expectedCrc;\n");
 	fprintf(this->fhSource,"			unexpectedValue.foundValue = foundCrc;\n");
 	fprintf(this->fhSource,"			memcpy((uint8_t*)failureInfo, &unexpectedValue, sizeof(unexpectedValue));\n");
@@ -290,7 +290,7 @@ void CGVG_ValidatorsGenerator::GenerateSource(CGDM_Interface *interface)
 	fprintfLabel(this->fhSource,"local functions");
 
 	//ASWV_ValidatorFunction_t *ASW_GetValidatorFunction(uint16_t packetId)
-	fprintf(this->fhSource,"%sV_ValidatorFunction_t *ASW_GetValidatorFunction(uint16_t packetId)\n",interface->preffix.c_str());
+	fprintf(this->fhSource,"%sV_ValidatorFunction_t *%s_GetValidatorFunction(uint16_t packetId)\n",interface->preffix.c_str(),interface->preffix.c_str());
 	fprintf(this->fhSource,"{\n");
 	fprintf(this->fhSource,"	%sV_ValidatorFunction_t *validator = NULL;\n",interface->preffix.c_str());
 	fprintf(this->fhSource,"	\n");
@@ -409,7 +409,7 @@ bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *inter
 
 			fprintf(fh,"	if (isValid == M_TRUE)\n");
 			fprintf(fh,"	{\n");
-			fprintf(fh,"		isValid = %sV_IsEnumerationValueValid(%s_%s_AllowedValues, ASW_%s_NB, structuredData->%s);\n",interface->preffix.c_str(),interface->preffix.c_str(),thisField->type.c_str(),enumAbbreviation.c_str(),thisField->name.c_str());
+			fprintf(fh,"		isValid = %sV_IsEnumerationValueValid(%s_%s_AllowedValues, %s_%s_NB, structuredData->%s);\n",interface->preffix.c_str(),interface->preffix.c_str(),thisField->type.c_str(),interface->preffix.c_str(),enumAbbreviation.c_str(),thisField->name.c_str());
 			fprintf(fh,"		*parameterCounter += 1;\n");
 			fprintf(fh,"	}\n");
 			toValidate=true;
@@ -421,13 +421,13 @@ bool generateFieldValidator(FILE *fh,CGDM_Field *thisField,CGDM_Interface *inter
 				fprintf(fh,"	if (isValid == M_TRUE)\n");
 				fprintf(fh,"	{\n");
 				if (thisField->restrictionFixedValue!="") fprintf(fh,"		if (structuredData->%s != %s)\n",thisField->name.c_str(),thisField->restrictionFixedValue.c_str());
-				if (thisField->restrictionMaxExclusive!="") fprintf(fh,"		if (structuredData->%s > %s)\n",thisField->name.c_str(),thisField->restrictionMaxExclusive.c_str());
-				if (thisField->restrictionMinExclusive!="") fprintf(fh,"		if (structuredData->%s < %s)\n",thisField->name.c_str(),thisField->restrictionMinExclusive.c_str());
-				if (thisField->restrictionMaxInclusive!="") fprintf(fh,"		if (structuredData->%s >= %s)\n",thisField->name.c_str(),thisField->restrictionMaxInclusive.c_str());
-				if (thisField->restrictionMinInclusive!="") fprintf(fh,"		if (structuredData->%s <= %s)\n",thisField->name.c_str(),thisField->restrictionMinInclusive.c_str());
+				if (thisField->restrictionMaxExclusive!="") fprintf(fh,"		if (structuredData->%s >= %s)\n",thisField->name.c_str(),thisField->restrictionMaxExclusive.c_str());
+				if (thisField->restrictionMinExclusive!="") fprintf(fh,"		if (structuredData->%s <= %s)\n",thisField->name.c_str(),thisField->restrictionMinExclusive.c_str());
+				if (thisField->restrictionMaxInclusive!="") fprintf(fh,"		if (structuredData->%s > %s)\n",thisField->name.c_str(),thisField->restrictionMaxInclusive.c_str());
+				if (thisField->restrictionMinInclusive!="") fprintf(fh,"		if (structuredData->%s < %s)\n",thisField->name.c_str(),thisField->restrictionMinInclusive.c_str());
 				fprintf(fh,"		{\n");
 				fprintf(fh,"			isValid = M_FALSE;\n");
-				fprintf(fh,"			*failureId = ASW_FID_INVALID_PARAMETER_VALUE;\n");
+				fprintf(fh,"			*failureId = %s_FID_INVALID_PARAMETER_VALUE;\n",interface->preffix.c_str());
 				fprintf(fh,"		}\n");
 				fprintf(fh,"		*parameterCounter += 1;\n");
 				fprintf(fh,"	}\n");
@@ -465,7 +465,7 @@ void generateValidatorsFunctions(FILE *fh,CGDM_Interface *interface,bool isJustP
 			fprintf(fh,"bool_t %sVU_Validate%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisPacket.name.c_str());
 			fprintf(fh,"{\n");
 			fprintf(fh,"	bool_t isValid = M_TRUE;\n");
-			fprintf(fh,"	*failureId = ASW_FID_OK;\n");
+			fprintf(fh,"	*failureId = %s_FID_OK;\n",interface->preffix.c_str());
 			fprintf(fh,"\n");
 			fprintf(fh,"	%s_%s_t *structuredData = (%s_%s_t *)input;\n\n",interface->preffix.c_str(),thisPacket.name.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
 			bool toValidate=false;
@@ -499,7 +499,7 @@ void generateValidatorsStructuresFunctions(FILE *fh,CGDM_Interface *interface,bo
 			fprintf(fh,"bool_t %sV_%s(void *input, uint16_t *failureId, uint8_t *failureInfo, uint16_t *parameterCounter)\n",interface->preffix.c_str(),thisStructure.name.c_str());
 			fprintf(fh,"\n{\n");
 			fprintf(fh,"	bool_t isValid = M_TRUE;\n");
-			fprintf(fh,"	*failureId = ASW_FID_OK;\n");
+			fprintf(fh,"	*failureId = %s_FID_OK;\n",interface->preffix.c_str());
 			fprintf(fh,"\n");
 			fprintf(fh,"	%s_%s_t *structuredData = (%s_%s_t *)input;\n\n",interface->preffix.c_str(),thisStructure.name.c_str(),interface->preffix.c_str(),thisStructure.name.c_str());
 			bool toValidate=false;
