@@ -7,7 +7,7 @@
 /* System Includes ***********************************************************/
 #include <iostream>
 #include <algorithm>
-
+#include <string.h>
 
 
 /* Application Includes ******************************************************/
@@ -198,30 +198,49 @@ bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interfa
 	if (thisField->hasMultiplicity)
 	{
 		//TODO
+		fprintf(fh, "  %s hasMultiplicity\n\n",thisField->name.c_str());
 	}
 	//variable
 	else if (thisField->type=="variable")
 	{
-//TODO
+		//TODO
+		fprintf(fh, "  %s variable\n\n",thisField->name.c_str());
 	}
 	//user-code
 	else if (thisField->isUserCode)
 	{
-		fprintf(fh,"	%sPU_Print&s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
+		fprintf(fh,"	%sPU_Print%s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
 	}
-	else if ((thisField->isStructure)
+	else if (thisField->isStructure)
 	{
-		fprintf(fh,"	%sP_Print&s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
+		fprintf(fh,"	%sP_Print%s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
 	}
 	else if (((thisField->isNative)||(thisField->isEnum))&&(thisField->hasMultiplicity==false))
 	{
 		if (thisField->isEnum)
 		{
-
+			fprintf(fh, "  %s_t %sLabel[%sP_LABELSIZE_NB];\n", thisField->enumBaseType.c_str(),thisField->name.c_str(), interface->preffix.c_str());
+			fprintf(fh, "  %sP_Print%s(%sLabel, structureData->%s);\n", interface->preffix.c_str(), thisField->type.c_str(), thisField->name.c_str(), thisField->name.c_str());
+			fprintf(fh, "  printf(\"\\t %s: %%d - %%s\\n\", structureData->%s, %sLabel);\n", thisField->name.c_str(), thisField->name.c_str(), thisField->name.c_str());
+			fprintf(fh, "\n");
 		}
 		else //native
 		{
-
+			//fprintf(fh, "  %s native\n\n",thisField->name.c_str());
+			const char *format = "%d"; // Default for int32, uint32
+			if (strcmp((char *)thisField->type.c_str(), "uint64") == 0 || strcmp((char *)thisField->type.c_str(), "int64") == 0)
+			{
+				format = "%ld"; // Long format for 64-bit integers
+			}
+			else if (strcmp((char *)thisField->type.c_str(), "float32") == 0 || strcmp((char *)thisField->type.c_str(), "float64") == 0)
+			{
+				format = "%f"; // Float format for floating-point types
+			}
+			else if (strcmp((char *)thisField->type.c_str(), "uint8") == 0)
+			{
+				format = "%u"; // Unsigned format for uint8
+			}
+			fprintf(fh, "  printf(\"\\t %s: %s\\n\", structureData->%s);\n\n", thisField->name.c_str(), format, thisField->name.c_str());
 		}
 	}
 }
