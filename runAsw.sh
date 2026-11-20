@@ -13,3 +13,4 @@ cp ASW_Deserializers.h 	../dpu-fos/server/aswPackets/include/ASW_Deserializers.h
 cp Deserializers.c 		../dpu-fos/server/aswPackets/src/Deserializers.c
 cp ASW_Validators.h 	../dpu-fos/server/aswPackets/include/ASW_Validators.h
 cp Validators.c 		../dpu-fos/server/aswPackets/src/Validators.c
+cp ASW_Printers.h 		../dpu-fos/server/aswPackets/include
