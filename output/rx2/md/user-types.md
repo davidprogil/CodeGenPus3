@@ -19,3 +19,13 @@ Data Fields:
 - Name: serviceSubType Type: uint8 (Lower Part of packet ID)
 - Name: sourceId type: uint16 - network address of TC issuer
 - Name: spare type: uint8 value ignored
+
+### PUS_AcceptanceReport_t
+Data Fields:
+- Name: version Type: uint 3 bits Fixed Value: 1
+- Name: packetType Type: 1 bit [EnumPktType](#enumpktyype)
+- Name: secondaryHeaderFlag Type: 1 bit Fixed Value: 1
+- Name: sourceId Type: uint 11 bits- network address of TC issuer
+- Name: sequenceFlags Type: 2 bits Always 0
+- Name: packetSequenceCount: Type 14 bits - Sequence ID of the TC that is being responded to
+	
