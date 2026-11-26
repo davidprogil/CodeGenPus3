@@ -210,7 +210,8 @@ void CGMG_MdGenerator::GenerateEnums(CGDM_Interface *interface)
 		fprintf(this->fhMd," |-------|-------|-----------------|\n");
 		for (auto & thisElement : thisEnumeration.elements)
 		{
-			fprintf(this->fhMd," |%s|%d|%s|\n",thisElement.label.c_str(),thisElement.value,thisElement.relatedType.c_str());
+			std::string typeMd=convertToMd(thisElement.relatedType);
+			fprintf(this->fhMd," |%s|%d|[%s](#%s)|\n",thisElement.label.c_str(),thisElement.value,thisElement.relatedType.c_str(),typeMd.c_str());
 		}
 		fprintf(this->fhMd,"<br>\n");
 		fprintf(this->fhMd,"\n");
