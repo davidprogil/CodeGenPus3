@@ -468,6 +468,8 @@ void generateValidatorsFunctions(FILE *fh,CGDM_Interface *interface,bool isJustP
 			fprintf(fh,"	*failureId = %s_FID_OK;\n",interface->preffix.c_str());
 			fprintf(fh,"\n");
 			fprintf(fh,"	%s_%s_t *structuredData = (%s_%s_t *)input;\n\n",interface->preffix.c_str(),thisPacket.name.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
+			fprintf(fh,"	void *data=(void*)&structuredData;\n");
+			fprintf(fh,"	data = data;\n");
 			bool toValidate=false;
 			for (auto & thisField : thisPacket.fields)
 			{
@@ -502,6 +504,9 @@ void generateValidatorsStructuresFunctions(FILE *fh,CGDM_Interface *interface,bo
 			fprintf(fh,"	*failureId = %s_FID_OK;\n",interface->preffix.c_str());
 			fprintf(fh,"\n");
 			fprintf(fh,"	%s_%s_t *structuredData = (%s_%s_t *)input;\n\n",interface->preffix.c_str(),thisStructure.name.c_str(),interface->preffix.c_str(),thisStructure.name.c_str());
+			fprintf(fh,"	void *data=(void*)&structuredData;\n");
+			fprintf(fh,"	data = data;\n");
+
 			bool toValidate=false;
 			for (auto & thisField : thisStructure.fields)
 			{

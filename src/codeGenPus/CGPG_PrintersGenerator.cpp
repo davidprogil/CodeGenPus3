@@ -198,28 +198,49 @@ bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interfa
 	if (thisField->hasMultiplicity)
 	{
 		//TODO
-		fprintf(fh, "  %s hasMultiplicity\n\n",thisField->name.c_str());
+		//fprintf(fh, "  %s hasMultiplicity\n\n",thisField->name.c_str());
+		fprintf(fh, "  printf(\"\\t %s: \");\n", thisField->name.c_str());
+		fprintf(fh, "  for (uint16_t %sIx = 0; %sIx < structureData->%s; %sIx++)\n", thisField->name.c_str(), thisField->name.c_str(), thisField->multiplicityFromField.c_str(), thisField->name.c_str());
+		fprintf(fh, "  {\n");
+		fprintf(fh, "      printf(\"%%d \", structureData->%s[%sIx]);\n", thisField->name.c_str(), thisField->name.c_str());
+		fprintf(fh, "  }\n");
+		fprintf(fh, "  printf(\"\\n\");\n");
 	}
 	//variable
 	else if (thisField->type=="variable")
 	{
-		//TODO
-		fprintf(fh, "  %s variable\n\n",thisField->name.c_str());
+		//fprintf(fh, "  %s variable\n\n",thisField->name.c_str());
+		CGDM_TypeEnum *thisEnum=NULL;
+		CGDM_Field *fieldFrom=getFieldFromName(thisField->typeFromField,brotherFields);
+		if (fieldFrom!=NULL) thisEnum=getEnumByName(fieldFrom->type,interface);
+		if ((fieldFrom!=NULL)&&(thisEnum!=NULL))
+		{
+			for (auto & thisElement : thisEnum->elements)
+			{
+				if (thisElement.relatedType!="null")
+				{
+					fprintf(fh,"  if (structureData->%s == %s_%s)\n",thisField->typeFromField.c_str(),interface->preffix.c_str(),thisElement.label.c_str());
+					fprintf(fh,"  {\n");
+					fprintf(fh,"    %sP_Print%s((%s_%s_t*)&structureData->%s);\n",interface->preffix.c_str(),thisElement.relatedType.c_str(),interface->preffix.c_str(),thisElement.relatedType.c_str(),thisField->name.c_str());
+					fprintf(fh,"  }\n");
+				}
+			}
+		}
 	}
 	//user-code
 	else if (thisField->isUserCode)
 	{
-		fprintf(fh,"	%sPU_Print%s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
+		fprintf(fh,"  %sPU_Print%s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
 	}
 	else if (thisField->isStructure)
 	{
-		fprintf(fh,"	%sP_Print%s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
+		fprintf(fh,"  %sP_Print%s(&structureData->%s);\n",interface->preffix.c_str(),thisField->type.c_str(),thisField->name.c_str());
 	}
 	else if (((thisField->isNative)||(thisField->isEnum))&&(thisField->hasMultiplicity==false))
 	{
 		if (thisField->isEnum)
 		{
-			fprintf(fh, "  %s_t %sLabel[%sP_LABELSIZE_NB];\n", thisField->enumBaseType.c_str(),thisField->name.c_str(), interface->preffix.c_str());
+			fprintf(fh, "  uint8_t %sLabel[%sP_LABELSIZE_NB];\n", thisField->name.c_str(), interface->preffix.c_str());
 			fprintf(fh, "  %sP_Print%s(%sLabel, structureData->%s);\n", interface->preffix.c_str(), thisField->type.c_str(), thisField->name.c_str(), thisField->name.c_str());
 			fprintf(fh, "  printf(\"\\t %s: %%d - %%s\\n\", structureData->%s, %sLabel);\n", thisField->name.c_str(), thisField->name.c_str(), thisField->name.c_str());
 			fprintf(fh, "\n");
@@ -243,6 +264,7 @@ bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interfa
 			fprintf(fh, "  printf(\"\\t %s: %s\\n\", structureData->%s);\n\n", thisField->name.c_str(), format, thisField->name.c_str());
 		}
 	}
+	return true;
 }
 
 void generatePrintersFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype)
