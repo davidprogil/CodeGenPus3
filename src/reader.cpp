@@ -21,7 +21,7 @@ using namespace std;
 
 
 int main(int argc, char *argv[]) {
-	cout << "!!!Reader!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! Reader !!!" << endl; // prints !!!Hello World!!!
 
 	X_Document doc;
 	X_DocumentReader reader;
@@ -29,7 +29,8 @@ int main(int argc, char *argv[]) {
 
 	if (argc!=2)
 	{
-		printf("Warning: usage: executableName inputFile.xml, using default file\n");
+		printf("Error: usage: executableName inputFile.xml\n");
+		return -1;
 	}
 	else
 	{

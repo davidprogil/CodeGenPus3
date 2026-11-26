@@ -32,7 +32,8 @@ int main(int argc, char *argv[]) {
 
 	if (argc!=4)
 	{
-		printf("Warning: usage: executableName inputFile.xml abbreviation outputFolder, using default file\n");
+		printf("Error: usage: executableName inputFile.xml abbreviation outputFolder\n");
+		return -1;
 	}
 	else
 	{
