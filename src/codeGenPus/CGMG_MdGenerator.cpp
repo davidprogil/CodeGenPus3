@@ -121,7 +121,6 @@ void CGMG_MdGenerator::GenerateField(CGDM_Interface *interface,CGDM_Field *thisF
 	//enums
 	if (thisField->isEnum)
 	{
-		std::string typeMd=convertToMd(thisField->type);
 		fprintf(this->fhMd,"- Name: %s Type: %s<br>\n",thisField->name.c_str(),thisField->enumBaseType.c_str());
 	}
 	//restrictions
