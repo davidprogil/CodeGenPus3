@@ -34,7 +34,6 @@ void CGDM_Interface::importDefinitionFromXmlDoc(X_Document *doc)
 		{
 			if (thisNode.name=="description")
 			{
-				printf("debug importDefinitionFromXmlDoc found description\n");
 				this->description=thisNode.content;
 			}
 			else if (thisNode.name=="types")

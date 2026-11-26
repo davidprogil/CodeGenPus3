@@ -59,7 +59,7 @@
 			<sgi:enumElement label="FUN_MODE_AUTONOMY2" value="16" type="null"></sgi:enumElement>
 			<sgi:enumElement label="FUN_MODE_AUTONOMY3" value="17" type="null"></sgi:enumElement>
 			<sgi:enumElement label="FUN_MODE_AUTONOMY4" value="18" type="null"></sgi:enumElement>
-			<sgi:enumElement label="FUN_MOVE_TO_POSITION" value="19" type="null"></sgi:enumElement>
+			<sgi:enumElement label="FUN_MOVE_TO_POSITION" value="19" type="MoveToPosition"></sgi:enumElement>
 		</sgi:enum>
 		<!-- Service 128 -->
 		<sgi:enum name="EnumMode" baseType="uint8">
@@ -140,9 +140,6 @@
 		</sgi:structureField>
 		<sgi:structureField name="Mode">
 			<sgi:field name="mode" type="EnumMode"></sgi:field>
-		</sgi:structureField>
-		<sgi:structureField name="CameraId">
-			<sgi:field name="cameraId" type="EnumCameraId"></sgi:field>
 		</sgi:structureField>
 		<!-- Service 8 -->
 		<sgi:structureField name="MoveToPosition">

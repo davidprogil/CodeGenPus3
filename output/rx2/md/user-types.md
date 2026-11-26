@@ -1,6 +1,6 @@
 ### Other Data Types
 
-####PUS_TmSecondaryHeader 
+#### PUS_TmSecondaryHeader 
 Data Fields:
 - Name: version Type: uint 4 bits Fixed Value: 1
 - Name: scTimeReferenceStatus type: uint8 - Fixed Value: 0
@@ -11,7 +11,7 @@ Data Fields:
 - Name: time type: uint32 - time stamp of the TM
 - Name: spare type: uint8 value ignored
  
-####PUS_TcSecondaryHeader
+#### PUS_TcSecondaryHeader
 Data Fields:
 - Name: version Type: uint 4 bits Fixed Value: 1
 - Name: acknowledgementFlags Type: 4 bits, bit 3 = user requests successful acknowledgment bit 0 = user requests  successful end of execution

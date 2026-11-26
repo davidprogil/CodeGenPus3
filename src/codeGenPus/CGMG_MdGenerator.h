@@ -21,9 +21,10 @@ class CGMG_MdGenerator {       // The class
     /* Attributes ******************************************************/
     FILE *fhMd;
     FILE *fhTemplate;
+    FILE *fhUserTypes;
     std::string preffix;
     /* Methods ******************************************************/
-    CGMG_MdGenerator(FILE *fhMd_p,FILE *fhTemplate_p,std::string preffix_p);
+    CGMG_MdGenerator(FILE *fhMd_p,FILE *fhTemplate_p,FILE *fhUserTypes_p,std::string preffix_p);
     void GenerateMd(CGDM_Interface *interface);
 
 
@@ -31,6 +32,7 @@ class CGMG_MdGenerator {       // The class
   private:
     /* Attributes ******************************************************/
     void GenerateTemplate(CGDM_Interface *interface);
+    void GenerateUserTypes(CGDM_Interface *interface);
     void GeneratePackets(CGDM_Interface *interface);
     void GenerateEnums(CGDM_Interface *interface);
     void GenerateStructures(CGDM_Interface *interface);

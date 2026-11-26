@@ -29,10 +29,11 @@ bool generateFieldPrinter(FILE *fh,CGDM_Field *thisField,CGDM_Interface *interfa
 void generateMdStructuresFunctions(FILE *fh,CGDM_Interface *interface,bool isJustPrototype);
 
 /* Public Methods  ***********************************************************/
-CGMG_MdGenerator::CGMG_MdGenerator(FILE *fhMd_p,FILE *fhTemplate_p,std::string preffix_p)
+CGMG_MdGenerator::CGMG_MdGenerator(FILE *fhMd_p,FILE *fhTemplate_p,FILE *fhUserTypes_p,std::string preffix_p)
 { // Constructor
 	this->fhMd=fhMd_p;
 	this->fhTemplate=fhTemplate_p;
+	this->fhUserTypes=fhUserTypes_p;
 	this->preffix=preffix_p;
 }
 
@@ -40,119 +41,21 @@ void CGMG_MdGenerator::GenerateMd(CGDM_Interface *interface)
 {
 	//generate template
 	this->GenerateTemplate(interface);
+	fprintf(this->fhMd,"\n");
 	//generate packets
 	this->GeneratePackets(interface);
+	fprintf(this->fhMd,"\n");
 	//generate structures
 	this->GenerateStructures(interface);
+	fprintf(this->fhMd,"\n");
 	//custom structures:
-	//TODO PUS_TmSecondaryHeader / PUS_TcSecondaryHeader
+	this->GenerateUserTypes(interface);
+	fprintf(this->fhMd,"\n");
 	//generate Enums
 	this->GenerateEnums(interface);
+	fprintf(this->fhMd,"\n");
 }
 
-/*void CGMG_MdGenerator::GenerateHeader(CGDM_Interface *interface)
-{
-	printf("\tcopyright...\n");
-	interface->preffix=this->preffix;
-	fprintfCopyright(this->fhHeader);
-	fprintf(this->fhHeader,"\n");
-	fprintf(this->fhHeader,"#ifndef %sP_Md_H\n",this->preffix.c_str());
-	fprintf(this->fhHeader,"#define %sP_Md_H\n",this->preffix.c_str());
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"system includes");
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"application includes");
-	fprintf(this->fhHeader,"#include <myTypes.h>\n");
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"component includes");
-	fprintf(this->fhHeader,"#include <%s_Fillers.h>\n",this->preffix.c_str());
-	fprintf(this->fhHeader,"#include <%s_MdUser.h>\n",this->preffix.c_str());
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"macros");
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"macros");
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"types");
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"public variables");
-	fprintf(this->fhHeader,"\n");
-
-	fprintfLabel(this->fhHeader,"public functions");
-	//enumerations
-	generateEnumeraionFunctions(this->fhHeader,interface,true);
-	//functions
-	fprintf(this->fhHeader,"//packets\n");
-	fprintf(this->fhHeader,"void %sP_Print(uint8_t *target, uint16_t targetNb);\n",this->preffix.c_str());
-	generateMdFunctions(this->fhHeader,interface,true);
-	fprintf(this->fhHeader,"\n");
-	//end if
-	fprintf(this->fhHeader,"#endif\n");
-}
-
-void CGMG_MdGenerator::GenerateSource(CGDM_Interface *interface)
-{
-	/*printf("\tcopyright....\n");
-	interface->preffix=this->preffix;
-	fprintfCopyright(this->fhSource);
-	fprintf(this->fhSource,"\n");
-	fprintfSystemIncldudes(this->fhSource);
-	fprintf(this->fhSource,"\n");
-	fprintfLabel(this->fhSource,"application includes includes");
-	fprintf(this->fhSource,"\n");
-	fprintfLabel(this->fhSource,"component includes");
-	fprintf(this->fhSource,"#include <%s_Md.h>\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"#include <%s_MdUser.h>\n",interface->preffix.c_str());
-	fprintf(this->fhSource,"\n");
-	fprintfLabel(this->fhSource,"local macros");
-	fprintf(this->fhSource,"#define %sP_LABELSIZE_NB (%d)\n",interface->preffix.c_str(),255);
-	fprintf(this->fhSource,"\n");
-	fprintfLabel(this->fhSource,"local types");
-	fprintf(this->fhSource,"\n");
-	fprintfLabel(this->fhSource,"public variables");
-	fprintf(this->fhSource,"\n");
-	fprintfLabel(this->fhSource,"local variables");
-	fprintf(this->fhSource,"\n");
-	fprintfLabel(this->fhSource,"local prototypes");
-	generateMdStructuresFunctions(this->fhSource,interface,true);
-	fprintf(this->fhSource,"\n");
-
-	fprintfLabel(this->fhSource,"public functions");
-	//enumerations
-	generateEnumeraionFunctions(this->fhSource,interface,false);
-
-	//print function
-	fprintf(this->fhSource,"void %sP_Print(uint8_t *target, uint16_t targetNb)\n",this->preffix.c_str());
-	fprintf(this->fhSource,"{\n");
-	fprintf(this->fhSource,"	uint16_t packetId = PUS_GetServiceSubServiceCompound(target, targetNb);\n");
-	fprintf(this->fhSource,"	switch (packetId)\n");
-	fprintf(this->fhSource,"	{\n");
-	for (auto & thisPacket : interface->packets)
-	{
-		fprintf(this->fhSource,"	case %s_%s_PACKETID:\n",interface->preffix.c_str(),stringToUpperString(thisPacket.name.c_str()).c_str());
-		fprintf(this->fhSource,"		%sP_Print%s((%s_%s_t*)target);\n",interface->preffix.c_str(),thisPacket.name.c_str(),interface->preffix.c_str(),thisPacket.name.c_str());
-		fprintf(this->fhSource,"		break;\n");
-	}
-	fprintf(this->fhSource,"	default:\n");
-	fprintf(this->fhSource,"		printf(\"warning %sP_Print unknown packet, can not print\\n\");\n",this->preffix.c_str());
-	fprintf(this->fhSource,"		break;\n");
-	fprintf(this->fhSource,"	}\n");
-	fprintf(this->fhSource,"}\n");
-
-	//packets
-	generateMdFunctions(this->fhSource,interface,false);
-
-	fprintfLabel(this->fhSource,"local functions");
-	//structures
-	generateMdStructuresFunctions(this->fhSource,interface,false);
-
-}*/
 /* Public Functions ******************************************************/
 /* none */
 
@@ -171,7 +74,10 @@ void CGMG_MdGenerator::GenerateStructures(CGDM_Interface *interface)
 		{
 			this->GenerateField(interface, &thisField);
 		}
+		fprintf(this->fhMd,"<br>\n");
+		fprintf(this->fhMd,"\n");
 	}
+
 
 }
 void CGMG_MdGenerator::GenerateTemplate(CGDM_Interface *interface)
@@ -183,6 +89,20 @@ void CGMG_MdGenerator::GenerateTemplate(CGDM_Interface *interface)
 	{
 		fputc(c, this->fhMd);
 	}
+	fprintf(this->fhMd,"<br>\n");
+	fprintf(this->fhMd,"\n");
+}
+
+void CGMG_MdGenerator::GenerateUserTypes(CGDM_Interface *interface)
+{
+	//read and write template at the same time
+	int c;
+	while ((c = fgetc(this->fhUserTypes)) != EOF)
+	{
+		fputc(c, this->fhMd);
+	}
+	fprintf(this->fhMd,"<br>\n");
+	fprintf(this->fhMd,"\n");
 }
 
 void CGMG_MdGenerator::GenerateField(CGDM_Interface *interface,CGDM_Field *thisField)
@@ -254,6 +174,7 @@ void CGMG_MdGenerator::GenerateField(CGDM_Interface *interface,CGDM_Field *thisF
 	{
 		fprintf(this->fhMd,"the number of times this field appears in the data is dictated by %s<br>\n,",thisField->multiplicityFromField.c_str());
 	}
+	fprintf(this->fhMd,"\n");
 
 }
 void CGMG_MdGenerator::GeneratePackets(CGDM_Interface *interface)
@@ -272,8 +193,10 @@ void CGMG_MdGenerator::GeneratePackets(CGDM_Interface *interface)
 			this->GenerateField(interface, &thisField);
 
 		}
+		fprintf(this->fhMd,"<br>\n");
+		fprintf(this->fhMd,"\n");
 	}
-	fprintf(this->fhMd,"<br>\n");
+
 }
 void CGMG_MdGenerator::GenerateEnums(CGDM_Interface *interface)
 {
@@ -289,6 +212,8 @@ void CGMG_MdGenerator::GenerateEnums(CGDM_Interface *interface)
 		{
 			fprintf(this->fhMd," |%s|%d|%s|\n",thisElement.label.c_str(),thisElement.value,thisElement.relatedType.c_str());
 		}
+		fprintf(this->fhMd,"<br>\n");
+		fprintf(this->fhMd,"\n");
 	}
 }
 

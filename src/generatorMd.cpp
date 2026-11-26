@@ -29,19 +29,21 @@ int main(int argc, char *argv[]) {
 	string abbreviation="ASW";
 	string templateFileName="";
 	string outputFileName=".";
+	string userTypesFileName=".";
 	bool isValid=true;
 
-	if (argc!=5)
+	if (argc!=6)
 	{
-		printf("Error: usage: executableName inputFile.xml template.md abbreviation outputFolder\n");
+		printf("Error: usage: executableName inputFile.xml template.md user-types.md abbreviation outputFolder\n");
 		return -1;
 	}
 	else
 	{
 		fileName=argv[1];
 		templateFileName=argv[2];
-		abbreviation=argv[3];
-		outputFileName=argv[4];
+		userTypesFileName=argv[3];
+		abbreviation=argv[4];
+		outputFileName=argv[5];
 	}
 
 	//load model
@@ -60,13 +62,25 @@ int main(int argc, char *argv[]) {
 
 	//load template
 	FILE *fhTemplate=fopen(templateFileName.c_str(),"r");
-	if (fh!=NULL)
+	if (fhTemplate!=NULL)
 	{
 		printf("reading template... \n");
 	}
 	else
 	{
 		printf("ERROR: main: could not open input file %s\n",templateFileName.c_str());
+		isValid=false;
+	}
+
+	//load userTypesFileName
+	FILE *fhUserTpes=fopen(userTypesFileName.c_str(),"r");
+	if (fhUserTpes!=NULL)
+	{
+		printf("reading user types... \n");
+	}
+	else
+	{
+		printf("ERROR: main: could not open input file %s\n",userTypesFileName.c_str());
 		isValid=false;
 	}
 
@@ -90,13 +104,14 @@ int main(int argc, char *argv[]) {
 
 		if (isValid)
 		{
-			CGMG_MdGenerator mdGenerator(outputFh,fhTemplate,abbreviation);
+			CGMG_MdGenerator mdGenerator(outputFh,fhTemplate,fhUserTpes,abbreviation);
 			printf("generating header... \n");
 			mdGenerator.GenerateMd(&interface);
 		}
 
 		if (outputFh!=NULL) fclose(outputFh);
 		if (fhTemplate!=NULL) fclose(fhTemplate);
+		if (fhUserTpes!=NULL) fclose(fhUserTpes);
 
 
 	}
