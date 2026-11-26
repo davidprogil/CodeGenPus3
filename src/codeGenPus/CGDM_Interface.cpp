@@ -34,7 +34,7 @@ void CGDM_Interface::importDefinitionFromXmlDoc(X_Document *doc)
 		{
 			if (thisNode.name=="description")
 			{
-				//printf("debug importDefinitionFromXmlDoc found description\n");
+				printf("debug importDefinitionFromXmlDoc found description\n");
 				this->description=thisNode.content;
 			}
 			else if (thisNode.name=="types")
@@ -97,6 +97,7 @@ void CGDM_Interface::importPacketsFromXmlDoc(X_Node *packets)
 				CGDM_Packet thisPacket;
 				thisPacket.name=thisNode.getContentOfAttribute("name");
 				thisPacket.id=thisNode.getContentOfAttribute("id");
+				thisPacket.description=thisNode.getContentOfSubNode("description");
 				//note: also imports structures:
 				this->importFieldsFromXmlDoc(&thisPacket.fields,&thisNode);
 				this->packets.push_back(thisPacket);

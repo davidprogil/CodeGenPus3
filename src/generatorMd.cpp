@@ -27,26 +27,28 @@ int main(int argc, char *argv[]) {
 	X_DocumentReader reader;
 	string fileName="./models/appSw.xml";
 	string abbreviation="ASW";
-	string outputFolder=".";
+	string templateFileName="";
+	string outputFileName=".";
 	bool isValid=true;
 
-	if (argc!=4)
+	if (argc!=5)
 	{
-		printf("Error: usage: executableName inputFile.xml abbreviation outputFolder\n");
+		printf("Error: usage: executableName inputFile.xml template.md abbreviation outputFolder\n");
 		return -1;
 	}
 	else
 	{
 		fileName=argv[1];
-		abbreviation=argv[2];
-		outputFolder=argv[3];
+		templateFileName=argv[2];
+		abbreviation=argv[3];
+		outputFileName=argv[4];
 	}
 
 	//load model
 	FILE *fh=fopen(fileName.c_str(),"r");
 	if (fh!=NULL)
 	{
-		printf("reading... \n");
+		printf("reading model... \n");
 		reader.Read(fh,&doc);
 		fclose(fh);
 	}
@@ -56,7 +58,19 @@ int main(int argc, char *argv[]) {
 		isValid=false;
 	}
 
-	/*if (isValid)
+	//load template
+	FILE *fhTemplate=fopen(templateFileName.c_str(),"r");
+	if (fh!=NULL)
+	{
+		printf("reading template... \n");
+	}
+	else
+	{
+		printf("ERROR: main: could not open input file %s\n",templateFileName.c_str());
+		isValid=false;
+	}
+
+	if (isValid)
 	{
 		//now actually read
 		printf("processing... \n");
@@ -65,37 +79,27 @@ int main(int argc, char *argv[]) {
 		//interface.print();
 
 		//generate
-		std::string headerFilename = outputFolder + "/" + abbreviation + "_Printers.h";
-		std::string sourceFilename = outputFolder + "/" + "Printers.c";
-		FILE *headerFh=fopen(headerFilename.c_str(),"w");
-		FILE *sourceFh=fopen(sourceFilename.c_str(),"w");
+		FILE *outputFh=fopen(outputFileName.c_str(),"w");
 
-		if (headerFh==NULL)
+		if (outputFh==NULL)
 		{
-			printf("ERROR: main: could not open input file %s\n",headerFilename.c_str());
-			isValid=false;
-		}
-
-		if (sourceFh==NULL)
-		{
-			printf("ERROR: main: could not open input file %s\n",sourceFilename.c_str());
+			printf("ERROR: main: could not open input file %s\n",outputFileName.c_str());
 			isValid=false;
 		}
 
 
 		if (isValid)
 		{
-			CGMG_MdGenerator mdGenerator(headerFh,sourceFh,abbreviation);
+			CGMG_MdGenerator mdGenerator(outputFh,fhTemplate,abbreviation);
 			printf("generating header... \n");
-			mdGenerator.GenerateHeader(&interface);
-			printf("generating source... \n");
-			mdGenerator.GenerateSource(&interface);
+			mdGenerator.GenerateMd(&interface);
 		}
 
-		if (headerFh!=NULL) fclose(headerFh);
-		if (sourceFh!=NULL) fclose(sourceFh);
+		if (outputFh!=NULL) fclose(outputFh);
+		if (fhTemplate!=NULL) fclose(fhTemplate);
 
-	}*/
+
+	}
 
 	printf("\nEND\n");
 	return 0;

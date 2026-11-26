@@ -13,7 +13,7 @@
 /* Public Methods  ***********************************************************/
 X_DocumentReader::X_DocumentReader()
 { // Constructor
-	std::cout << "Hello X_DocumentReader x" << std::endl;
+	//std::cout << "Hello X_DocumentReader x" << std::endl;
 
 }
 

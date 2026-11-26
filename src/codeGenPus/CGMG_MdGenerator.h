@@ -19,18 +19,22 @@
 class CGMG_MdGenerator {       // The class
   public:
     /* Attributes ******************************************************/
-    FILE *fhHeader;
-    FILE *fhSource;
+    FILE *fhMd;
+    FILE *fhTemplate;
     std::string preffix;
     /* Methods ******************************************************/
-    CGMG_MdGenerator(FILE *fhHeader_p,FILE *fhSource_p,std::string preffix_p);
-    void GenerateHeader(CGDM_Interface *interface);
-    void GenerateSource(CGDM_Interface *interface);
+    CGMG_MdGenerator(FILE *fhMd_p,FILE *fhTemplate_p,std::string preffix_p);
+    void GenerateMd(CGDM_Interface *interface);
+
 
 
   private:
     /* Attributes ******************************************************/
-    /* none */
+    void GenerateTemplate(CGDM_Interface *interface);
+    void GeneratePackets(CGDM_Interface *interface);
+    void GenerateEnums(CGDM_Interface *interface);
+    void GenerateStructures(CGDM_Interface *interface);
+    void GenerateField(CGDM_Interface *interface,CGDM_Field *thisField);
 
     /* Methods ******************************************************/
     /* none */

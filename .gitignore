@@ -78,3 +78,9 @@ Testing/
 /ASW_Deserializers.h
 /ASW_Fillers.h
 /ASW_Serializers.h
+/ASW_Printers.h
+/ASW_Validators.h
+/generatorPrinters
+/Printers.c
+/Validators.c
+/generatorMd
